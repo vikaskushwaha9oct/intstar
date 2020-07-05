@@ -4,15 +4,16 @@ class Entity(val attention: SwitchSide, val action: SwitchSide, val bootstrap: I
     init {
         createSwitch(this, attention)
         createSwitch(this, action)
-        attention.manifest(bootstrap)
+        attention.manifest(bootstrap, this)
     }
 
     var alive = true
+    var context = bootstrap
 
     fun start() {
         while (alive) {
-            val measurements = attention.manifest(null)
-            action.manifest(measurements)
+            attention.wait(this)
+            action.manifest(context, this)
         }
     }
 
@@ -20,8 +21,11 @@ class Entity(val attention: SwitchSide, val action: SwitchSide, val bootstrap: I
         alive = false
     }
 
-    override fun manifest(measurements: Iterable<Measurement>?): Iterable<Measurement> {
-        attention.manifest(measurements)
-        return emptyList()
+    override fun manifest(measurements: Iterable<Measurement>, otherSide: SwitchSide) {
+        if (otherSide == attention) {
+            context = measurements
+        } else {
+            attention.manifest(measurements, otherSide)
+        }
     }
 }

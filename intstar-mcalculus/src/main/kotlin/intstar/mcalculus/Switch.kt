@@ -1,7 +1,11 @@
 package intstar.mcalculus
 
 interface SwitchSide {
-    fun manifest(measurements: Iterable<Measurement>?): Iterable<Measurement>
+    fun manifest(measurements: Iterable<Measurement>, otherSide: SwitchSide)
+
+    fun wait(otherSide: SwitchSide) {
+        throw UnsupportedOperationException()
+    }
 
     fun connect(otherSide: SwitchSide) {
     }

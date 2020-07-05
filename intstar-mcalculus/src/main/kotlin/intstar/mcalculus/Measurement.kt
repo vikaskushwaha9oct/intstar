@@ -1,13 +1,11 @@
 package intstar.mcalculus
 
-data class Measurement(
-    val left: Measure,
-    val right: Measure,
-    val comparison: Comparison,
-    val confidence: Confidence? = null
-)
+import kotlin.Double.Companion.NEGATIVE_INFINITY
+import kotlin.Double.Companion.POSITIVE_INFINITY
 
-data class Confidence(val intervals: Array<ConfidenceInterval>)
+data class Measurement(val left: Measure, val comparison: Comparison, val right: Measure, val confidence: Confidence)
+
+data class Confidence(val intervals: List<ConfidenceInterval>)
 
 data class ConfidenceInterval(val low: Double, val high: Double, val confidence: Double)
 
@@ -33,4 +31,14 @@ interface EntityConcept : Concept
 
 data class IdEntityConcept(val id: String) : EntityConcept
 
-data class ByteEntityConcept(val value: ByteArray) : EntityConcept
+data class ByteEntityConcept(val value: List<Byte>) : EntityConcept
+
+val TRUE = Confidence(listOf(ConfidenceInterval(0.0, 0.0, 1.0)))
+
+val INVALID = Confidence(listOf(ConfidenceInterval(NEGATIVE_INFINITY, POSITIVE_INFINITY, 1.0)))
+
+val ENTITY = IdEntityConcept("$")
+
+val FOCUS = IdEntityConcept("*")
+
+val MANIFEST = IdEntityConcept("@")
