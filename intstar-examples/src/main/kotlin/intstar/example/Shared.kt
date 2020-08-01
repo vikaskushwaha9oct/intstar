@@ -1,10 +1,10 @@
 package intstar.example
 
+import intstar.mcalculus.Agent
 import intstar.mcalculus.Comparison.EQUALS
 import intstar.mcalculus.Comparison.GREATER_THAN
 import intstar.mcalculus.ConstantMeasure
 import intstar.mcalculus.DerivedMeasure
-import intstar.mcalculus.Entity
 import intstar.mcalculus.Measurement
 import intstar.mcalculus.SwitchSide
 import intstar.mcalculus.TRUE
@@ -51,7 +51,7 @@ open class BaseAction : SwitchSide {
     }
 
     fun stopEntity() {
-        (entity as Entity).stop()
+        (entity as Agent).stop()
     }
 }
 

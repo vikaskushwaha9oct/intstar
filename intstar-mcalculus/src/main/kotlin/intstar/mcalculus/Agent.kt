@@ -1,6 +1,6 @@
 package intstar.mcalculus
 
-class Entity(
+class Agent(
     private val attention: SwitchSide,
     private val action: SwitchSide,
     bootstrap: Iterator<Measurement>

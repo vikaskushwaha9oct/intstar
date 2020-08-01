@@ -1,14 +1,14 @@
 package intstar.example
 
+import intstar.mcalculus.Agent
 import intstar.mcalculus.DerivedMeasure
 import intstar.mcalculus.ENTITY
-import intstar.mcalculus.Entity
 import intstar.mcalculus.FOCUS
 import intstar.mcalculus.Measurement
 import intstar.mcalculus.SwitchSide
 
 private fun main() {
-    val entity = Entity(BaseAttention(), HelloAction(), listOf(ENTITY_FOCUSED).iterator())
+    val entity = Agent(BaseAttention(), HelloAction(), listOf(ENTITY_FOCUSED).iterator())
     entity.start()
 }
 
