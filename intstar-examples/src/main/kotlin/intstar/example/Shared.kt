@@ -34,7 +34,7 @@ open class BaseAttention : SwitchSide {
 }
 
 open class BaseAction : SwitchSide {
-    var entity: SwitchSide? = null
+    var agent: SwitchSide? = null
 
     override fun manifest(measurements: Iterator<Measurement>, otherSide: SwitchSide) {
     }
@@ -43,15 +43,15 @@ open class BaseAction : SwitchSide {
     }
 
     override fun connect(otherSide: SwitchSide) {
-        entity = otherSide
+        agent = otherSide
     }
 
     fun manifestEntity(measurements: Iterator<Measurement>, otherSide: SwitchSide) {
-        entity?.manifest(measurements, otherSide)
+        agent?.manifest(measurements, otherSide)
     }
 
     fun stopEntity() {
-        (entity as Agent).stop()
+        (agent as Agent).stop()
     }
 }
 

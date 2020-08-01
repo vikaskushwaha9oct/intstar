@@ -1,27 +1,27 @@
 package intstar.example
 
+import intstar.mcalculus.AGENT
 import intstar.mcalculus.Agent
 import intstar.mcalculus.DerivedMeasure
-import intstar.mcalculus.ENTITY
 import intstar.mcalculus.FOCUS
 import intstar.mcalculus.Measurement
 import intstar.mcalculus.SwitchSide
 
 private fun main() {
-    val entity = Agent(BaseAttention(), HelloAction(), listOf(ENTITY_FOCUSED).iterator())
+    val entity = Agent(BaseAttention(), HelloAction(), listOf(AGENT_FOCUSED).iterator())
     entity.start()
 }
 
-private val ENTITY_FOCUSED = DerivedMeasure(ENTITY, FOCUS).isGreaterThanZero()
-private val ENTITY_DEFOCUSED = DerivedMeasure(ENTITY, FOCUS).isEqualToZero()
+private val AGENT_FOCUSED = DerivedMeasure(AGENT, FOCUS).isGreaterThanZero()
+private val AGENT_DEFOCUSED = DerivedMeasure(AGENT, FOCUS).isEqualToZero()
 
 private class HelloAction : BaseAction() {
     override fun manifest(measurements: Iterator<Measurement>, otherSide: SwitchSide) {
         val ms = measurements.asSequence().toList()
-        if (ms.contains(ENTITY_FOCUSED)) {
+        if (ms.contains(AGENT_FOCUSED)) {
             println("Hello World")
-            manifestEntity(listOf(ENTITY_DEFOCUSED).iterator(), this)
-        } else if (ms.contains(ENTITY_DEFOCUSED)) {
+            manifestEntity(listOf(AGENT_DEFOCUSED).iterator(), this)
+        } else if (ms.contains(AGENT_DEFOCUSED)) {
             stopEntity()
         }
     }
