@@ -12,17 +12,20 @@ import intstar.mcalculus.TRUE
 open class BaseAttention : SwitchSide {
     var context = mutableListOf<Measurement>()
 
-    override fun manifest(measurements: Iterable<Measurement>, otherSide: SwitchSide) {
+    override fun manifest(measurements: Iterator<Measurement>, otherSide: SwitchSide) {
         updateContext(measurements, otherSide)
     }
 
     override fun wait(otherSide: SwitchSide) {
-        otherSide.manifest(context.toList(), this)
+        otherSide.manifest(context.toList().iterator(), this)
         resetContext()
     }
 
-    fun updateContext(measurements: Iterable<Measurement>, otherSide: SwitchSide) {
-        context.addAll(measurements)
+    override fun connect(otherSide: SwitchSide) {
+    }
+
+    fun updateContext(measurements: Iterator<Measurement>, otherSide: SwitchSide) {
+        context.addAll(measurements.asSequence())
     }
 
     fun resetContext() {
@@ -33,14 +36,17 @@ open class BaseAttention : SwitchSide {
 open class BaseAction : SwitchSide {
     var entity: SwitchSide? = null
 
-    override fun manifest(measurements: Iterable<Measurement>, otherSide: SwitchSide) {
+    override fun manifest(measurements: Iterator<Measurement>, otherSide: SwitchSide) {
+    }
+
+    override fun wait(otherSide: SwitchSide) {
     }
 
     override fun connect(otherSide: SwitchSide) {
         entity = otherSide
     }
 
-    fun manifestEntity(measurements: Iterable<Measurement>, otherSide: SwitchSide) {
+    fun manifestEntity(measurements: Iterator<Measurement>, otherSide: SwitchSide) {
         entity?.manifest(measurements, otherSide)
     }
 

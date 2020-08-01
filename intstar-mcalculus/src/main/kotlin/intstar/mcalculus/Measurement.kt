@@ -1,44 +1,50 @@
 package intstar.mcalculus
 
-import kotlin.Double.Companion.NEGATIVE_INFINITY
-import kotlin.Double.Companion.POSITIVE_INFINITY
-
-data class Measurement(val left: Measure, val comparison: Comparison, val right: Measure, val confidence: Confidence)
-
-data class Confidence(val intervals: List<ConfidenceInterval>)
-
-data class ConfidenceInterval(val low: Double, val high: Double, val confidence: Double)
-
-enum class Comparison {
-    EQUALS,
-    LESS_THAN,
-    GREATER_THAN,
-    LESS_THAN_EQUALS,
-    GREATER_THAN_EQUALS
+data class Measurement(
+    val left: Measure,
+    val comparison: Comparison,
+    val right: Measure,
+    val confidence: List<ConfidenceValue>
+) {
+    init {
+        require(confidence.sumsToOne { it.value }) { "Total confidence should be 1" }
+        require(confidence.isDisjoint { it.intervals }) { "Intervals should be disjoint" }
+        require(confidence.isSortedByStart { it.intervals }) { "Confidence values should be sorted by interval starts" }
+    }
 }
 
-interface Measure
+data class ConfidenceValue(val intervals: List<Interval>, val value: Double) {
+    init {
+        require(value > 0 && value <= 1) { "Confidence value should be > 0 and <= 1" }
+        require(intervals.isDisconnected()) { "Intervals within a confidence value should be disconnected" }
+        require(intervals.isSortedByStart()) { "Intervals within a confidence value should be sorted by their starts" }
+    }
+}
 
-data class ConstantMeasure(val value: Double) : Measure
+enum class Comparison(val symbol: String) {
+    EQUALS("="),
+    LESS_THAN("<"),
+    GREATER_THAN(">"),
+    LESS_THAN_EQUALS("<="),
+    GREATER_THAN_EQUALS(">=")
+}
 
-data class DerivedMeasure(val concept: Concept, val measurable: IdEntityConcept) : Measure
+sealed class Measure
 
-interface Concept
+data class ConstantMeasure(val value: Double) : Measure() {
+    init {
+        require(value.isDefined()) { "Constant measure should have a defined value" }
+    }
+}
 
-data class RelationConcept(val left: EntityConcept, val right: EntityConcept) : Concept
+data class DerivedMeasure(val concept: Concept, val measurable: IdEntityConcept) : Measure()
 
-interface EntityConcept : Concept
+sealed class Concept
 
-data class IdEntityConcept(val id: String) : EntityConcept
+data class RelationConcept(val left: EntityConcept, val right: EntityConcept) : Concept()
 
-data class ByteEntityConcept(val value: List<Byte>) : EntityConcept
+sealed class EntityConcept : Concept()
 
-val TRUE = Confidence(listOf(ConfidenceInterval(0.0, 0.0, 1.0)))
+data class IdEntityConcept(val value: String) : EntityConcept()
 
-val INVALID = Confidence(listOf(ConfidenceInterval(NEGATIVE_INFINITY, POSITIVE_INFINITY, 1.0)))
-
-val ENTITY = IdEntityConcept("$")
-
-val FOCUS = IdEntityConcept("*")
-
-val MANIFEST = IdEntityConcept("@")
+data class ByteEntityConcept(val value: ByteString) : EntityConcept()

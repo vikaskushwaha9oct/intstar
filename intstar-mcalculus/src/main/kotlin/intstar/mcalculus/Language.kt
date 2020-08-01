@@ -1,12 +1,9 @@
 package intstar.mcalculus
 
-import java.io.InputStream
-import java.io.OutputStream
-
 interface LanguageParser {
-    fun parse(stream: InputStream): Iterable<Measurement>
+    fun parse(stream: InputStream): Iterator<Measurement>
 }
 
 interface LanguageRenderer {
-    fun render(measurements: Iterable<Measurement>): OutputStream
+    fun render(measurements: Iterator<Measurement>): InputStream
 }
