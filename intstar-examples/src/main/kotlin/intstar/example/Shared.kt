@@ -46,7 +46,7 @@ open class BaseAction : SwitchSide {
         agent = otherSide
     }
 
-    fun manifestEntity(measurements: Iterator<Measurement>, otherSide: SwitchSide) {
+    fun manifestAgent(measurements: Iterator<Measurement>, otherSide: SwitchSide) {
         agent?.manifest(measurements, otherSide)
     }
 

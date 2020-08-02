@@ -16,6 +16,7 @@ data class Measurement(
 data class ConfidenceValue(val intervals: List<Interval>, val value: Double) {
     init {
         require(value > 0 && value <= 1) { "Confidence value should be > 0 and <= 1" }
+        require(intervals.isNotEmpty()) { "Intervals within a confidence value should not be empty" }
         require(intervals.isDisconnected()) { "Intervals within a confidence value should be disconnected" }
         require(intervals.isSortedByStart()) { "Intervals within a confidence value should be sorted by their starts" }
     }

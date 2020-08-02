@@ -8,8 +8,8 @@ import intstar.mcalculus.Measurement
 import intstar.mcalculus.SwitchSide
 
 private fun main() {
-    val entity = Agent(BaseAttention(), HelloAction(), listOf(AGENT_FOCUSED).iterator())
-    entity.start()
+    val agent = Agent(BaseAttention(), HelloAction(), listOf(AGENT_FOCUSED).iterator())
+    agent.start()
 }
 
 private val AGENT_FOCUSED = DerivedMeasure(AGENT, FOCUS).isGreaterThanZero()
@@ -20,7 +20,7 @@ private class HelloAction : BaseAction() {
         val ms = measurements.asSequence().toList()
         if (ms.contains(AGENT_FOCUSED)) {
             println("Hello World")
-            manifestEntity(listOf(AGENT_DEFOCUSED).iterator(), this)
+            manifestAgent(listOf(AGENT_DEFOCUSED).iterator(), this)
         } else if (ms.contains(AGENT_DEFOCUSED)) {
             stopEntity()
         }

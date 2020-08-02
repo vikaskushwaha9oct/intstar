@@ -14,7 +14,7 @@ fun <T> Iterable<T>.sumsToOne(valueFn: (T) -> Double): Boolean {
 }
 
 fun Double.isDefined(): Boolean {
-    return !isNaN()
+    return !isNaN() && (-0.0).compareTo(this) != 0
 }
 
 sealed class Interval {
@@ -27,13 +27,14 @@ sealed class Interval {
 
 data class OpenInterval(val low: Double, val high: Double) : Interval() {
     init {
+        require(low.isDefined() && high.isDefined()) { "Low and high should have a defined value" }
         require(high > low) { "High should be > low for open interval" }
     }
 
     override fun compareStart(other: Interval): Int {
         return when (other) {
             is OpenInterval -> low.compareTo(other.low)
-            is PointInterval -> low.compareTo(other.value).let { if (it == 0) -1 else it }
+            is PointInterval -> low.compareTo(other.value).let { if (it == 0) 1 else it }
         }
     }
 
@@ -51,12 +52,12 @@ data class OpenInterval(val low: Double, val high: Double) : Interval() {
 
 data class PointInterval(val value: Double) : Interval() {
     init {
-        require(value.isFinite()) { "Point interval value should be finite" }
+        require(value.isDefined() && value.isFinite()) { "Point interval value should be defined and finite" }
     }
 
     override fun compareStart(other: Interval): Int {
         return when (other) {
-            is OpenInterval -> value.compareTo(other.low).let { if (it == 0) 1 else it }
+            is OpenInterval -> value.compareTo(other.low).let { if (it == 0) -1 else it }
             is PointInterval -> value.compareTo(other.value)
         }
     }

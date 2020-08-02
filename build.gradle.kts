@@ -16,6 +16,7 @@ subprojects {
 
     dependencies {
         implementation(kotlin("stdlib-jdk8"))
+        testImplementation("org.junit.jupiter:junit-jupiter:5.6.0")
     }
 
     tasks {
@@ -25,5 +26,9 @@ subprojects {
         compileTestKotlin {
             kotlinOptions.jvmTarget = "1.8"
         }
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
     }
 }
