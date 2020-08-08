@@ -17,8 +17,6 @@ import intstar.mcalculus.OpenInterval
 import intstar.mcalculus.PointInterval
 import intstar.mcalculus.RelationConcept
 import java.nio.charset.Charset
-import kotlin.math.max
-import kotlin.math.min
 
 fun Iterator<Measurement>.renderMLang(): String {
     return MLangRenderer().render(this).use { it.readBytes().toString(Charsets.UTF_8) }
@@ -27,7 +25,7 @@ fun Iterator<Measurement>.renderMLang(): String {
 class MLangRenderer(
     private val charset: Charset = Charsets.UTF_8,
     private val newline: String = "\n",
-    private val doubleToLiteralFn: (Double) -> String = { it.toLiteral(2) }
+    private val doubleToLiteralFn: (Double) -> String = Double::toString
 ) : LanguageRenderer {
     override fun render(measurements: Iterator<Measurement>): InputStream {
         val mLiterals = measurements.asSequence().map { it.toLiteral(doubleToLiteralFn) }.iterator()
@@ -55,22 +53,6 @@ class MLangRenderer(
     }
 }
 
-fun Double.toLiteral(maxPrecision: Int): String {
-    val str = toString()
-    val dotIndex = str.indexOf('.')
-    if (dotIndex >= 0) {
-        val integerPart = str.substring(0, dotIndex)
-        val eIndex = str.indexOf('E').let { if (it < 0) str.length else it }
-        val exponentPart = str.substring(eIndex)
-        val fractionalPart = str.substring(dotIndex, eIndex).let {
-            val trimmed = it.substring(0, min(it.length, max(maxPrecision, 1) + 1)).trimEnd('0')
-            if (trimmed.length > 1) trimmed else ""
-        }
-        return "$integerPart$fractionalPart$exponentPart"
-    }
-    return str
-}
-
 private fun Measurement.toLiteral(doubleToLiteralFn: (Double) -> String): String {
     val leftLiteral = left.toLiteral(doubleToLiteralFn)
     val rightLiteral = right.toLiteral(doubleToLiteralFn)
@@ -80,16 +62,13 @@ private fun Measurement.toLiteral(doubleToLiteralFn: (Double) -> String): String
 
 private fun ConfidenceValue.toLiteral(doubleToLiteralFn: (Double) -> String): String {
     val intervalsLiteral = intervals.joinToString(" ~ ") { it.toLiteral(doubleToLiteralFn) }
-    return "[%s = %s]".format(intervalsLiteral, doubleToLiteralFn(value))
+    return "[%s %% %s]".format(intervalsLiteral, doubleToLiteralFn(value))
 }
 
 private fun Interval.toLiteral(doubleToLiteralFn: (Double) -> String): String {
     return when (this) {
         is PointInterval -> doubleToLiteralFn(value)
-        is OpenInterval -> "%s:%s".format(
-            if (low.isFinite()) "${doubleToLiteralFn(low)} " else "",
-            if (high.isFinite()) " ${doubleToLiteralFn(high)}" else ""
-        )
+        is OpenInterval -> "%s : %s".format(doubleToLiteralFn(low), doubleToLiteralFn(high))
     }
 }
 
@@ -115,7 +94,7 @@ private fun EntityConcept.toLiteral(): String {
 }
 
 private fun String.toLiteral(): String {
-    return if (none { it.isWhitespace() || it.isISOControl() || it in "{}[]();,:~<>='`\"" }) this
+    return if (isNotEmpty() && none { it.isWhitespace() || it.isISOControl() || it in "{}[]();,:~%<>='`\"" }) this
     else toLiteral('`')
 }
 

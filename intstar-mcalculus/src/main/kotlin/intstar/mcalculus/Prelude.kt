@@ -1,5 +1,6 @@
 package intstar.mcalculus
 
+import java.nio.ByteBuffer.wrap
 import java.util.TreeMap
 import kotlin.math.abs
 
@@ -122,7 +123,7 @@ class ByteString(bytes: ByteArray = EMPTY_BYTE_ARRAY) : Iterable<Byte> {
     }
 
     fun asString(): String {
-        return String(bytes)
+        return Charsets.UTF_8.newDecoder().decode(wrap(bytes)).toString()
     }
 
     override fun equals(other: Any?): Boolean {

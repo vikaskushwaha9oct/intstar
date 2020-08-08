@@ -4,13 +4,17 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.assertTimeoutPreemptively
+import java.time.Duration.ofSeconds
 
 class TestAgent {
     @Test
     fun test() {
-        val agent = Agent(TestAttention(), TestAction(), listOf(MSG).iterator())
-        assertThrows<UnsupportedOperationException> { agent.wait(agent) }
-        agent.start()
+        assertTimeoutPreemptively(ofSeconds(2)) {
+            val agent = Agent(TestAttention(), TestAction(), listOf(MSG).iterator())
+            assertThrows<UnsupportedOperationException> { agent.wait(agent) }
+            agent.start()
+        }
     }
 }
 
