@@ -94,7 +94,7 @@ private fun EntityConcept.toLiteral(): String {
 }
 
 private fun String.toLiteral(): String {
-    return if (isNotEmpty() && none { it.isWhitespace() || it.isISOControl() || it in "{}[]();,:~%<>='`\"" }) this
+    return if (isNotEmpty() && all { it.isMLangValid() && !it.isMLangDelimiter() }) this
     else toLiteral('`')
 }
 
@@ -124,7 +124,7 @@ private fun String.toLiteral(quote: Char): String {
             '\r' -> builder.append("\\r")
             '\\' -> builder.append("\\\\")
             quote -> builder.append("\\" + quote)
-            else -> if (char != ' ' && (char.isWhitespace() || char.isISOControl())) {
+            else -> if (!char.isMLangValid()) {
                 val hex = char.toInt().toString(16)
                 val pad = if (hex.length <= 2) 2 else 4
                 val escape = if (pad == 2) 'x' else 'u'

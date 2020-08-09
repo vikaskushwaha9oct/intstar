@@ -8,13 +8,11 @@ import intstar.mcalculus.ConfidenceValue
 import intstar.mcalculus.ConstantMeasure
 import intstar.mcalculus.DerivedMeasure
 import intstar.mcalculus.EntityConcept
-import intstar.mcalculus.INFINITY
 import intstar.mcalculus.IdEntityConcept
 import intstar.mcalculus.Interval
 import intstar.mcalculus.LanguageParser
 import intstar.mcalculus.Measure
 import intstar.mcalculus.Measurement
-import intstar.mcalculus.NEG_INFINITY
 import intstar.mcalculus.OpenInterval
 import intstar.mcalculus.PointInterval
 import intstar.mcalculus.RelationConcept
@@ -37,11 +35,8 @@ class MLangParser(private val charset: Charset = Charsets.UTF_8) : LanguageParse
     }
 }
 
-class ParseException(message: String, val context: ParsedContext? = null) : Exception(message) {
-    fun getContextualMessage(): String {
-        return message + if (context != null) "\n" + context else ""
-    }
-}
+class ParseException(message: String, val context: ParsedContext? = null) :
+    Exception(message + if (context != null) "\n" + context else "")
 
 data class ParsedContext(val text: String, val lineNo: Int, val colNo: Int) {
     override fun toString(): String {
@@ -55,7 +50,7 @@ private fun InputStream.parseChars(charset: Charset): Sequence<ParsedChar> {
         for (line in BufferedReader(InputStreamReader(this@parseChars, charset)).lines()) {
             var colNo = 1
             for (char in line) {
-                if (char !in " \t" && (char.isWhitespace() || char.isISOControl())) {
+                if (!char.isMLangValid()) {
                     val context = ParsedContext("$char", lineNo, colNo)
                     throw ParseException("Invalid char \\u" + char.toInt().toString(16), context)
                 }
@@ -82,7 +77,7 @@ private fun Sequence<ParsedChar>.parseTokens(): Sequence<Token> {
                 tokenType = null
             }
 
-            if (tokenType == null && parsedChar.char !in " \t\n") {
+            if (tokenType == null && !parsedChar.char.isMLangSpace()) {
                 tokenType = TokenType.values().find { it.isStart(parsedChar.char) }
             }
 
@@ -147,24 +142,24 @@ private class BraceNode(val type: BraceNodeType, val parent: BraceNode? = null) 
         if (tokens.isNotEmpty()) {
             var prev = '\n'
             for (token in tokens) {
-                if (token.type == TokenType.CONTROL && token.text[0] in "{}[]()") {
+                if (token.type == TokenType.CONTROL && token.text[0].isMLangBracket()) {
                     val curr = token.text[0]
-                    if (curr in "{[(") {
-                        if (prev in "{[(") {
+                    if (curr.isMLangBracketOpen()) {
+                        if (prev.isMLangBracketOpen()) {
                             throw parseException("Expected close of $prev first", token)
                         }
                     } else {
                         if (prev == '\n') {
                             throw parseException("Non matching $curr", token)
                         }
-                        if ("{[(".indexOf(prev) != "}])".indexOf(curr)) {
+                        if (!curr.isBracketCloseCounterpart(prev)) {
                             throw parseException("Expected close of $prev first", token)
                         }
                     }
                     prev = curr
                 }
             }
-            if (prev in "{[(") {
+            if (prev.isMLangBracketOpen()) {
                 throw parseException("Expected close of $prev first", tokens.last())
             }
         }
@@ -243,7 +238,9 @@ private class MBuilder(val tokens: List<Token>) {
             index += 1
             return ByteEntityConcept(ByteString(value.toByteArray()))
         } else if (isQuotedString()) {
-            return ByteEntityConcept(ByteString(tokens[index].text.toByteArray()))
+            val value = tokens[index].text
+            index += 1
+            return ByteEntityConcept(ByteString(value.toByteArray()))
         }
         throw parseException("Expected a ( or string literal")
     }
@@ -294,27 +291,23 @@ private class MBuilder(val tokens: List<Token>) {
             index += 1
             intervals.add(buildConfidenceInterval())
         }
-        if (!isEqual()) {
-            throw parseException("Expected a =")
+        if (!isControl('%')) {
+            throw parseException("Expected a %")
         }
         index += 1
         return ConfidenceValue(intervals, buildNumber())
     }
 
     private fun buildConfidenceInterval(): Interval {
-        if (isControl(':')) {
-            index += 1
-            return OpenInterval(NEG_INFINITY, if (isEqual() || isControl('~')) INFINITY else buildNumber())
-        }
         val first = buildNumber()
-        if (isEqual() || isControl('~')) {
+        if (isControl('%') || isControl('~')) {
             return PointInterval(first)
         }
         if (!isControl(':')) {
             throw parseException("Expected a :")
         }
         index += 1
-        return OpenInterval(first, if (isEqual() || isControl('~')) INFINITY else buildNumber())
+        return OpenInterval(first, buildNumber())
     }
 
     private fun buildNumber(): Double {
@@ -344,15 +337,11 @@ private class MBuilder(val tokens: List<Token>) {
 
     private fun isFollowedByConfidence(): Boolean {
         return index == tokens.lastIndex ||
-                index < tokens.lastIndex && with(tokens[index + 1]) { type == TokenType.CONTROL && text == "[" }
+                index < tokens.lastIndex && with(tokens[index + 1]) { type == TokenType.CONTROL && text[0] == '[' }
     }
 
     private fun isControl(char: Char): Boolean {
         return index <= tokens.lastIndex && with(tokens[index]) { type == TokenType.CONTROL && text[0] == char }
-    }
-
-    private fun isEqual(): Boolean {
-        return index <= tokens.lastIndex && with(tokens[index]) { type == TokenType.COMPARISON && text[0] == '=' }
     }
 
     private fun isIdEntity(): Boolean {
@@ -459,7 +448,7 @@ private data class TextError(val msg: String, val index: Int) : TextOrError()
 private enum class TokenType {
     COMPARISON {
         override fun isStart(char: Char): Boolean {
-            return char in "<>="
+            return char.isMLangComparison()
         }
 
         override fun isStop(char: Char, builder: List<ParsedChar>): Boolean {
@@ -468,7 +457,7 @@ private enum class TokenType {
     },
     CONTROL {
         override fun isStart(char: Char): Boolean {
-            return char in "{}[]();,:~"
+            return char.isMLangControl()
         }
 
         override fun isStop(char: Char, builder: List<ParsedChar>): Boolean {
@@ -477,7 +466,7 @@ private enum class TokenType {
     },
     BACK_QUOTE_TEXT {
         override fun isStart(char: Char): Boolean {
-            return char == '`'
+            return char.isMLangBackQuote()
         }
 
         override fun isStop(char: Char, builder: List<ParsedChar>): Boolean {
@@ -486,7 +475,7 @@ private enum class TokenType {
     },
     NORMAL_QUOTE_TEXT {
         override fun isStart(char: Char): Boolean {
-            return char in "'\""
+            return char.isMLangQuote()
         }
 
         override fun isStop(char: Char, builder: List<ParsedChar>): Boolean {
@@ -509,7 +498,7 @@ private enum class TokenType {
         }
 
         override fun isStop(char: Char, builder: List<ParsedChar>): Boolean {
-            return char in "{}[]();,:~<>='`\" \t\n"
+            return char.isMLangDelimiter()
         }
     };
 
@@ -518,7 +507,7 @@ private enum class TokenType {
     abstract fun isStop(char: Char, builder: List<ParsedChar>): Boolean
 
     fun createText(builder: List<ParsedChar>): String {
-        val tokenText = builder.joinToString("")
+        val tokenText = builder.joinToString("") { it.char.toString() }
         if (this == BACK_QUOTE_TEXT || this == NORMAL_QUOTE_TEXT) {
             val lineNo = builder.first().lineNo
             if (tokenText.length < 2 && tokenText.first() != tokenText.last()) {
@@ -549,7 +538,7 @@ private fun String.unescape(quoteChar: Char): TextOrError {
                 builder.append(this[i])
             }
             this[i + 1] == 'x' -> {
-                if (i >= this.length - 3) {
+                if (i + 3 < this.length) {
                     val code = String(charArrayOf(this[i + 2], this[i + 3]))
                     try {
                         builder.append(toChars(code.toInt(16)))
@@ -564,7 +553,7 @@ private fun String.unescape(quoteChar: Char): TextOrError {
                 i += 3
             }
             this[i + 1] == 'u' -> {
-                if (i >= this.length - 5) {
+                if (i + 5 < this.length) {
                     val code = String(charArrayOf(this[i + 2], this[i + 3], this[i + 4], this[i + 5]))
                     try {
                         builder.append(toChars(code.toInt(16)))
