@@ -16,7 +16,6 @@ import intstar.mcalculus.Measurement
 import intstar.mcalculus.OpenInterval
 import intstar.mcalculus.PointInterval
 import intstar.mcalculus.RelationConcept
-import intstar.mcalculus.TRUE
 import java.io.BufferedReader
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -35,8 +34,8 @@ class MLangParser(private val charset: Charset = Charsets.UTF_8) : LanguageParse
     }
 }
 
-class ParseException(message: String, val context: ParsedContext? = null) :
-    Exception(message + if (context != null) "\n" + context else "")
+class ParseException(val error: String, val context: ParsedContext? = null) :
+    Exception(error + if (context != null) "\n" + context else "")
 
 data class ParsedContext(val text: String, val lineNo: Int, val colNo: Int) {
     override fun toString(): String {
@@ -251,7 +250,7 @@ private class MBuilder(val tokens: List<Token>) {
 
     private fun buildByte(): Int {
         endOfTokensCheck()
-        val value = with(tokens[index]) { if (type == TokenType.NO_QUOTE_TEXT) text.toInt(16) else null }
+        val value = with(tokens[index]) { if (type == TokenType.NO_QUOTE_TEXT) text.toIntOrNull(16) else null }
         if (value != null && value >= 0 && value <= 255) {
             index += 1
             return value
@@ -270,9 +269,6 @@ private class MBuilder(val tokens: List<Token>) {
     }
 
     private fun buildConfidence(): List<ConfidenceValue> {
-        if (index > tokens.lastIndex) {
-            return TRUE
-        }
         val confidence = mutableListOf<ConfidenceValue>()
         while (isControl('[')) {
             index += 1
@@ -521,14 +517,14 @@ private enum class TokenType {
         val tokenText = builder.joinToString("") { it.char.toString() }
         if (this == BACK_QUOTE_TEXT || this == NORMAL_QUOTE_TEXT) {
             val lineNo = builder.first().lineNo
-            if (tokenText.length < 2 && tokenText.first() != tokenText.last()) {
+            if (tokenText.length < 2 || tokenText.first() != tokenText.last()) {
                 val context = ParsedContext(tokenText, lineNo, builder.last().colNo)
                 throw ParseException("Missing ending quote " + tokenText.first(), context)
             }
             return when (val textOrError = tokenText.substring(1, tokenText.lastIndex).unescape(tokenText.first())) {
                 is TextResult -> textOrError.text
                 is TextError -> {
-                    val context = ParsedContext(tokenText, lineNo, builder.first().colNo + textOrError.index)
+                    val context = ParsedContext(tokenText, lineNo, builder.first().colNo + 1 + textOrError.index)
                     throw ParseException(textOrError.msg, context)
                 }
             }

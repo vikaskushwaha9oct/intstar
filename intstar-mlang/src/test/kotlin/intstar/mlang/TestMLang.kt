@@ -19,6 +19,7 @@ import intstar.mcalculus.RelationConcept
 import intstar.mcalculus.TRUE
 import intstar.mcalculus.UNKNOWN
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 
 class TestMLang {
@@ -37,11 +38,58 @@ class TestMLang {
         assertEquals(sampleMLangStrWithBracesExpanded(), sampleMLangStrWithBraces().parseMLang().renderMLang())
     }
 
+    @Test
+    fun testParserForErrors() {
+        assertParseError("[1:6] Invalid char \\u2009", "hello\u2009world")
+        assertParseError("[1:7] Expected close of [ first", "a [ b ( c")
+        assertParseError("[1:3] Non matching )", "a ) b")
+        assertParseError("[1:7] Expected close of ( first", "a ( b ] c")
+        assertParseError("[1:13] Expected close of [ first", "a ( b ) c [ d")
+        assertParseError("[1:5] Cannot have a } right after a {", "a { } b")
+        assertParseError("[1:7] Cannot have a , right after a ,", "{ a , , b }")
+        assertParseError("[1:1] Cannot have a } at the beginning", "} b")
+        assertParseError("[1:1] Cannot have a , at the beginning", ", b")
+        assertParseError("[1:3] Non matching }", "a } b")
+        assertParseError("[1:3] No enclosing {} found for ,", "a , b")
+        assertParseError("[1:2] Invalid escape seq \\0", "'\\0'")
+        assertParseError("[1:2] Tab literal not allowed in quoted text", "'\t'")
+        assertParseError("[1:2] Ascii escape seq should have 2 digits", "'\\x1'")
+        assertParseError("[1:2] Ascii escape seq should be composed of 2 hexadecimal digits", "'\\x1g'")
+        assertParseError("[1:2] Unicode escape seq should have 4 digits", "'\\u123'")
+        assertParseError("[1:2] Unicode escape seq should be composed of 4 hexadecimal digits", "'\\u111g'")
+        assertParseError("[1:6] Missing ending quote \"", "\"hello\n")
+        assertParseError("[1:3] Expected a :", "a b")
+        assertParseError("[1:5] Expected a identifier", "a : 'b'")
+        assertParseError("[1:1] Expected a ( or string literal", "<a>")
+        assertParseError("[1:2] Expected a hex based byte", "(zz 00)")
+        assertParseError("[1:7] Expected a comparison", "a : b c")
+        assertParseError("[1:24] Expected a ]", "a : b > 0.0 [0.0 % 1.0 % 1.0]")
+        assertParseError("[1:25] Extraneous trailing tokens", "a : b > 0.0 [0.0 % 1.0] 1.0")
+        assertParseError("[1:24] Expected a %", "a : b > 0.0 [0.0 : 1.0 * 1.0]")
+        assertParseError("[1:18] Expected a :", "a : b > 0.0 [0.0 * 1.0]")
+        assertParseError("[1:9] Expected a number", "a : b > c")
+        assertParseError("[1:7] Reached end of tokens before completing measurement", "a : b >")
+        assertParseError("[2:17] Confidence value should be > 0 and <= 1", "a : b \n> 0.0 [0.0 % 2.0]")
+    }
+
+    private fun assertParseError(err: String, str: String) {
+        var ex: ParseException? = null
+        try {
+            str.parseMLang().asSequence().toList()
+        } catch (e: ParseException) {
+            ex = e
+        }
+        assertNotNull(ex, "no parse error found: $str")
+        assertNotNull(ex!!.context, "no parse error context found: $str")
+        val actualErr = with(ex.context!!) { "[$lineNo:$colNo] ${ex.error}" }
+        assertEquals(err, actualErr, "wrong error found: $str")
+    }
+
     private fun sampleMLangStr(): String {
         return """
             $ : * > hello ~ (f2 28 a1) : `<=~` [0.0 % 1.0];
-            'I \'said\' "hello" and "world"' : hello = 5.0 [-Infinity : 0.0 ~ 0.0 % 0.56] [100.0 : 200.0 % 0.44];
-            -Infinity < 'I \'said\' "hello" and "world"' ~ "hello\\\n\x00\u2009" : `hello world` [-Infinity : Infinity % 1.0];
+            'I \'said\' "hello" and "world"\'' : hello = 5.0 [-Infinity : 0.0 ~ 0.0 % 0.56] [100.0 : 200.0 % 0.44];
+            -Infinity < 'I \'said\' "hello" and "world"\'' ~ "hello\\\n\x00\u2009" : `hello world` [-Infinity : Infinity % 1.0];
             "" : `` >= 4.9E-324 [45.651 : Infinity % 1.0];
             5.0 <= -Infinity [-Infinity : 0.0 ~ 0.0 : Infinity % 1.0];""".trimIndent()
     }
@@ -53,7 +101,7 @@ class TestMLang {
         val ie4 = IdEntityConcept("")
         val be1 = ByteEntityConcept(ByteString(byteArrayOf(-14, 40, -95)))
         val be2 = ByteEntityConcept(ByteString("hello\\\n\u0000\u2009".toByteArray()))
-        val be3 = ByteEntityConcept(ByteString("I 'said' \"hello\" and \"world\"".toByteArray()))
+        val be3 = ByteEntityConcept(ByteString("I 'said' \"hello\" and \"world\"'".toByteArray()))
         val be4 = ByteEntityConcept(ByteString())
         val cm1 = ConstantMeasure(5.0)
         val cm2 = ConstantMeasure(NEG_INFINITY)

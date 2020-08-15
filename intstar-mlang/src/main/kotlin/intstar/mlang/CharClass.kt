@@ -9,7 +9,7 @@ fun Char.isMLangDelimiter(): Boolean {
 }
 
 fun Char.isMLangNonSpace(): Boolean {
-    return !this.isWhitespace() && !this.isISOControl()
+    return !isWhitespace() && !isISOControl()
 }
 
 fun Char.isMLangSpace(): Boolean {
