@@ -24,24 +24,29 @@ import org.junit.jupiter.api.Test
 class TestMLang {
     @Test
     fun testRenderer() {
-        assertEquals(testMLangStr(), testMeasurements().iterator().renderMLang())
+        assertEquals(sampleMLangStr(), sampleMeasurements().iterator().renderMLang())
     }
 
     @Test
     fun testParser() {
-        assertEquals(testMeasurements(), testMLangStr().parseMLang().asSequence().toList())
+        assertEquals(sampleMeasurements(), sampleMLangStr().parseMLang().asSequence().toList())
     }
 
-    private fun testMLangStr(): String {
+    @Test
+    fun testParserForBraces() {
+        assertEquals(sampleMLangStrWithBracesExpanded(), sampleMLangStrWithBraces().parseMLang().renderMLang())
+    }
+
+    private fun sampleMLangStr(): String {
         return """
-            |$ : * > hello ~ (f2 28 a1) : `<=~` [0.0 % 1.0];
-            |'I \'said\' "hello" and "world"' : hello = 5.0 [-Infinity : 0.0 ~ 0.0 % 0.56] [100.0 : 200.0 % 0.44];
-            |-Infinity < 'I \'said\' "hello" and "world"' ~ "hello\\\n\x00\u2009" : `hello world` [-Infinity : Infinity % 1.0];
-            |"" : `` >= 4.9E-324 [45.651 : Infinity % 1.0];
-            |5.0 <= -Infinity [-Infinity : 0.0 ~ 0.0 : Infinity % 1.0];""".trimMargin()
+            $ : * > hello ~ (f2 28 a1) : `<=~` [0.0 % 1.0];
+            'I \'said\' "hello" and "world"' : hello = 5.0 [-Infinity : 0.0 ~ 0.0 % 0.56] [100.0 : 200.0 % 0.44];
+            -Infinity < 'I \'said\' "hello" and "world"' ~ "hello\\\n\x00\u2009" : `hello world` [-Infinity : Infinity % 1.0];
+            "" : `` >= 4.9E-324 [45.651 : Infinity % 1.0];
+            5.0 <= -Infinity [-Infinity : 0.0 ~ 0.0 : Infinity % 1.0];""".trimIndent()
     }
 
-    private fun testMeasurements(): List<Measurement> {
+    private fun sampleMeasurements(): List<Measurement> {
         val ie1 = IdEntityConcept("hello")
         val ie2 = IdEntityConcept("<=~")
         val ie3 = IdEntityConcept("hello world")
@@ -68,5 +73,37 @@ class TestMLang {
             Measurement(dm5, Comparison.GREATER_THAN_EQUALS, cm3, listOf(cv3)),
             Measurement(cm1, Comparison.LESS_THAN_EQUALS, cm2, FALSE)
         )
+    }
+
+    private fun sampleMLangStrWithBraces(): String {
+        return "{a1, a2} {, ~ a3} : {{b1, b2} > {0.0} [-1.0 % 0.5], {b3, b4} <= 1.0 {[0.0 % 0.5], [1.0 % 0.5]}} [1.0 : 2.0 ~ 2.0 % 0.5];"
+    }
+
+    private fun sampleMLangStrWithBracesExpanded(): String {
+        return """
+            a1 : b1 > 0.0 [-1.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a1 : b2 > 0.0 [-1.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a1 : b3 <= 1.0 [0.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a1 : b3 <= 1.0 [1.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a1 : b4 <= 1.0 [0.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a1 : b4 <= 1.0 [1.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a1 ~ a3 : b1 > 0.0 [-1.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a1 ~ a3 : b2 > 0.0 [-1.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a1 ~ a3 : b3 <= 1.0 [0.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a1 ~ a3 : b3 <= 1.0 [1.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a1 ~ a3 : b4 <= 1.0 [0.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a1 ~ a3 : b4 <= 1.0 [1.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a2 : b1 > 0.0 [-1.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a2 : b2 > 0.0 [-1.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a2 : b3 <= 1.0 [0.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a2 : b3 <= 1.0 [1.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a2 : b4 <= 1.0 [0.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a2 : b4 <= 1.0 [1.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a2 ~ a3 : b1 > 0.0 [-1.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a2 ~ a3 : b2 > 0.0 [-1.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a2 ~ a3 : b3 <= 1.0 [0.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a2 ~ a3 : b3 <= 1.0 [1.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a2 ~ a3 : b4 <= 1.0 [0.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];
+            a2 ~ a3 : b4 <= 1.0 [1.0 % 0.5] [1.0 : 2.0 ~ 2.0 % 0.5];""".trimIndent()
     }
 }

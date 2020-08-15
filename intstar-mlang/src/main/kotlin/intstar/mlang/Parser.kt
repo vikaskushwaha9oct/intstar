@@ -94,14 +94,14 @@ private fun Sequence<Token>.parseMeasurements(): Sequence<Measurement> {
 
         for (token in this@parseMeasurements) {
             if (token.type == TokenType.CONTROL && token.text == ";") {
-                yieldAll(node.toMeasurements())
+                yieldAll(node.root().toMeasurements())
                 node = BraceNode(BraceNodeType.AND)
             } else {
                 node = node.nextWriteNode(token)
                 node.tokens.add(token)
             }
         }
-        yieldAll(node.toMeasurements())
+        yieldAll(node.root().toMeasurements())
     }
 }
 
@@ -115,6 +115,10 @@ private class BraceNode(val type: BraceNodeType, val parent: BraceNode? = null) 
 
     init {
         parent?.children?.add(this)
+    }
+
+    fun root(): BraceNode {
+        return parent?.root() ?: this
     }
 
     fun nextWriteNode(token: Token): BraceNode {
@@ -367,25 +371,33 @@ private enum class BraceNodeType {
         }
 
         override fun nextWriteNodeForBraceEnd(node: BraceNode): BraceNode {
-            return if (isClosed(node)) SIMPLE.nextWriteNodeForBraceEnd(node)
-            else throw ParseException("Cannot have a } right after a " + node.tokens.last().text)
+            return when {
+                isClosed(node) -> SIMPLE.nextWriteNodeForBraceEnd(node)
+                node.children.isNotEmpty() -> node
+                else -> throw ParseException("Cannot have a } right after a {")
+            }
         }
 
         override fun nextWriteNodeForComma(node: BraceNode): BraceNode {
             return when {
                 isClosed(node) -> SIMPLE.nextWriteNodeForComma(node)
-                node.tokens.last().text == "{" -> SIMPLE.nextWriteNodeForComma(BraceNode(SIMPLE, node))
+                isLastTokenNotComma(node) -> node
+                node.children.isEmpty() -> SIMPLE.nextWriteNodeForComma(BraceNode(SIMPLE, node))
                 else -> throw ParseException("Cannot have a , right after a ,")
             }
         }
 
         override fun nextWriteNodeForOthers(node: BraceNode): BraceNode {
-            return if (isClosed(node)) SIMPLE.nextWriteNodeForOthers(node)
+            return if (isClosed(node)) AND.nextWriteNodeForOthers(node.nearestAncestor { it.type == AND }!!)
             else AND.nextWriteNodeForOthers(BraceNode(AND, node))
         }
 
         fun isClosed(node: BraceNode): Boolean {
             return node.tokens.last().text == "}"
+        }
+
+        fun isLastTokenNotComma(node: BraceNode): Boolean {
+            return node.tokens.count { it.text == "," } == node.children.size - 1
         }
     },
     AND {
@@ -423,7 +435,6 @@ private enum class BraceNodeType {
         override fun nextWriteNodeForOthers(node: BraceNode): BraceNode {
             return node
         }
-
     };
 
     abstract fun nextWriteNodeForBraceStart(node: BraceNode): BraceNode
