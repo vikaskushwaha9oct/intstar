@@ -2,18 +2,18 @@ package intstar.example
 
 import intstar.mcalculus.AGENT
 import intstar.mcalculus.Agent
-import intstar.mcalculus.DerivedMeasure
 import intstar.mcalculus.FOCUS
 import intstar.mcalculus.Measurement
 import intstar.mcalculus.SwitchSide
+import intstar.mcalculus.TRUE
 
 private fun main() {
     val agent = Agent(BaseAttention(), HelloAction(), listOf(AGENT_FOCUSED).iterator())
     agent.start()
 }
 
-private val AGENT_FOCUSED = DerivedMeasure(AGENT, FOCUS).isGreaterThanZero()
-private val AGENT_DEFOCUSED = DerivedMeasure(AGENT, FOCUS).isEqualToZero()
+private val AGENT_FOCUSED = (AGENT ms FOCUS) gt 0.0 with TRUE
+private val AGENT_DEFOCUSED = (AGENT ms FOCUS) eq 0.0 with TRUE
 
 private class HelloAction : BaseAction() {
     override fun manifest(measurements: Iterator<Measurement>, otherSide: SwitchSide) {

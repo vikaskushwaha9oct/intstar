@@ -1,13 +1,8 @@
 package intstar.example
 
 import intstar.mcalculus.Agent
-import intstar.mcalculus.Comparison.EQUALS
-import intstar.mcalculus.Comparison.GREATER_THAN
-import intstar.mcalculus.ConstantMeasure
-import intstar.mcalculus.DerivedMeasure
 import intstar.mcalculus.Measurement
 import intstar.mcalculus.SwitchSide
-import intstar.mcalculus.TRUE
 
 open class BaseAttention : SwitchSide {
     var context = mutableListOf<Measurement>()
@@ -53,12 +48,4 @@ open class BaseAction : SwitchSide {
     fun stopEntity() {
         (agent as Agent).stop()
     }
-}
-
-fun DerivedMeasure.isGreaterThanZero(): Measurement {
-    return Measurement(this, GREATER_THAN, ConstantMeasure(0.0), TRUE)
-}
-
-fun DerivedMeasure.isEqualToZero(): Measurement {
-    return Measurement(this, EQUALS, ConstantMeasure(0.0), TRUE)
 }
