@@ -1,28 +1,34 @@
 package intstar.example
 
-import intstar.mcalculus.AGENT
 import intstar.mcalculus.Agent
+import intstar.mcalculus.EntityConcept
 import intstar.mcalculus.FOCUS
+import intstar.mcalculus.MANIFEST
 import intstar.mcalculus.Measurement
 import intstar.mcalculus.SwitchSide
 import intstar.mcalculus.TRUE
 
 private fun main() {
-    val agent = Agent(BaseAttention(), HelloAction(), listOf(AGENT_FOCUSED).iterator())
+    val bootstrap = listOf(HELLO_ACTION_MANIFEST, HELLO_ACTION_FOCUSED).iterator()
+    val agent = Agent(UnionAttention(), UnionAction(::manifestCreator), bootstrap)
     agent.start()
 }
 
-private val AGENT_FOCUSED = (AGENT ms FOCUS) gt 0.0 with TRUE
-private val AGENT_DEFOCUSED = (AGENT ms FOCUS) eq 0.0 with TRUE
+private val HELLO_ACTION_FOCUSED = ("hello" ms FOCUS) gt 0.0 with TRUE
+private val HELLO_ACTION_MANIFEST = ("hello" rel b("HelloAction") ms MANIFEST) gt 0.0 with TRUE
 
-private class HelloAction : BaseAction() {
+private fun manifestCreator(concept: EntityConcept): SwitchSide {
+    return if (concept.bstr?.asString() == "HelloAction") HelloAction() else throw UnsupportedOperationException()
+}
+
+private class HelloAction : BaseSwitchSide() {
     override fun manifest(measurements: Iterator<Measurement>, otherSide: SwitchSide) {
-        val ms = measurements.asSequence().toList()
-        if (ms.contains(AGENT_FOCUSED)) {
+        val mts = measurements.asSequence().toList()
+        if (mts.contains(HELLO_ACTION_MANIFEST)) {
             println("Hello World")
-            manifestAgent(listOf(AGENT_DEFOCUSED).iterator(), this)
-        } else if (ms.contains(AGENT_DEFOCUSED)) {
-            stopEntity()
+            otherSide.manifest(listOf(HELLO_ACTION_FOCUSED).iterator(), this)
+        } else {
+            (otherSide as Agent).stop()
         }
     }
 }
