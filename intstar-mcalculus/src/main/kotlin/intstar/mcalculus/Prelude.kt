@@ -1,14 +1,14 @@
 package intstar.mcalculus
 
 import java.nio.ByteBuffer.wrap
-import java.util.TreeMap
+import java.util.*
 import kotlin.math.abs
 
 typealias InputStream = java.io.InputStream
 
-val INFINITY = Double.POSITIVE_INFINITY
+const val INFINITY = Double.POSITIVE_INFINITY
 
-val NEG_INFINITY = Double.NEGATIVE_INFINITY
+const val NEG_INFINITY = Double.NEGATIVE_INFINITY
 
 fun <T> Iterable<T>.sumsToOne(valueFn: (T) -> Double): Boolean {
     return abs(sumByDouble(valueFn) - 1) < 0.00001

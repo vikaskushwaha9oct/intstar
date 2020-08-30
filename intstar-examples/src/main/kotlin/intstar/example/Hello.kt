@@ -1,12 +1,7 @@
 package intstar.example
 
-import intstar.mcalculus.Agent
-import intstar.mcalculus.EntityConcept
-import intstar.mcalculus.FOCUS
-import intstar.mcalculus.MANIFEST
-import intstar.mcalculus.Measurement
-import intstar.mcalculus.SwitchSide
-import intstar.mcalculus.TRUE
+import intstar.base.*
+import intstar.mcalculus.*
 
 private fun main() {
     val bootstrap = listOf(HELLO_ACTION_MANIFEST, HELLO_ACTION_FOCUSED).iterator()

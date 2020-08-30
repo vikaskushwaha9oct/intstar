@@ -1,7 +1,7 @@
 package intstar.mcalculus
 
 data class Measurement(
-    val left: Measure,
+    val left: DerivedMeasure,
     val comparison: Comparison,
     val right: Measure,
     val confidence: List<ConfidenceValue>

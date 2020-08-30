@@ -1,11 +1,6 @@
-package intstar.example
+package intstar.base
 
-import intstar.mcalculus.EntityConcept
-import intstar.mcalculus.FOCUS
-import intstar.mcalculus.MANIFEST
-import intstar.mcalculus.Measurement
-import intstar.mcalculus.SwitchSide
-import intstar.mcalculus.createSwitch
+import intstar.mcalculus.*
 
 abstract class BaseSwitchSide : SwitchSide {
     override fun wait(otherSide: SwitchSide) {
@@ -16,7 +11,7 @@ abstract class BaseSwitchSide : SwitchSide {
     }
 }
 
-class UnionAttention() : BaseSwitchSide() {
+class UnionAttention : BaseSwitchSide() {
     private var context = mutableListOf<Measurement>()
 
     override fun manifest(measurements: Iterator<Measurement>, otherSide: SwitchSide) {
@@ -35,7 +30,7 @@ class UnionAction(private val manifestCreator: (EntityConcept) -> SwitchSide) : 
     override fun manifest(measurements: Iterator<Measurement>, otherSide: SwitchSide) {
         val mts = measurements.asSequence().toList()
         for (mt in mts.filter { it.left.measurable == MANIFEST }) {
-            mt.left.concept!!.let {
+            mt.left.concept.let {
                 val manifest = manifestCreator(it.right!!)
                 createSwitch(otherSide, manifest)
                 manifests[it.left!!] = manifest

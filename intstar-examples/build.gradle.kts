@@ -1,3 +1,4 @@
 dependencies {
-    compile(project(":intstar-mcalculus"))
+    implementation(project(":intstar-mcalculus"))
+    implementation(project(":intstar-base"))
 }

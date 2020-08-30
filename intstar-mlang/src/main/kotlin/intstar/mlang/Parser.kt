@@ -1,26 +1,8 @@
 package intstar.mlang
 
-import intstar.mcalculus.ByteEntityConcept
-import intstar.mcalculus.ByteString
-import intstar.mcalculus.Comparison
-import intstar.mcalculus.Concept
-import intstar.mcalculus.ConfidenceValue
-import intstar.mcalculus.ConstantMeasure
-import intstar.mcalculus.DerivedMeasure
-import intstar.mcalculus.EntityConcept
-import intstar.mcalculus.IdEntityConcept
-import intstar.mcalculus.Interval
-import intstar.mcalculus.LanguageParser
-import intstar.mcalculus.Measure
-import intstar.mcalculus.Measurement
-import intstar.mcalculus.OpenInterval
-import intstar.mcalculus.PointInterval
-import intstar.mcalculus.RelationConcept
-import java.io.BufferedReader
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
+import intstar.mcalculus.*
+import java.io.*
 import java.io.InputStream
-import java.io.InputStreamReader
 import java.lang.Character.toChars
 import java.nio.charset.Charset
 
@@ -186,14 +168,10 @@ private class MBuilder(val tokens: List<Token>) {
 
     fun buildMeasurement(): Measurement {
         try {
-            return Measurement(buildLeftMeasure(), buildComparison(), buildRightMeasure(), buildConfidence())
+            return Measurement(buildDerivedMeasure(), buildComparison(), buildRightMeasure(), buildConfidence())
         } catch (e: IllegalArgumentException) {
             throw parseException(e.message!!, tokens.last())
         }
-    }
-
-    private fun buildLeftMeasure(): Measure {
-        return if (isFollowedByComparison()) buildConstantMeasure() else buildDerivedMeasure()
     }
 
     private fun buildRightMeasure(): Measure {
@@ -329,10 +307,6 @@ private class MBuilder(val tokens: List<Token>) {
     private fun parseException(message: String): ParseException {
         endOfTokensCheck()
         return parseException(message, tokens[index])
-    }
-
-    private fun isFollowedByComparison(): Boolean {
-        return index < tokens.lastIndex && tokens[index + 1].type == TokenType.COMPARISON
     }
 
     private fun isFollowedByConfidence(): Boolean {
