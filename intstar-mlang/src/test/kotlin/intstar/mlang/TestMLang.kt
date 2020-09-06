@@ -92,17 +92,17 @@ class TestMLang {
         val cv1 = ConfidenceValue(listOf(OpenInterval(NEG_INFINITY, 0.0), PointInterval(0.0)), 0.56)
         val cv2 = ConfidenceValue(listOf(OpenInterval(100.0, 200.0)), 0.44)
         val cv3 = ConfidenceValue(listOf(OpenInterval(45.651, INFINITY)), 1.0)
-        val dm1 = DerivedMeasure(AGENT, FOCUS)
+        val dm1 = DerivedMeasure(IdEntityConcept(AGENT), IdEntityConcept(FOCUS))
         val dm2 = DerivedMeasure(RelationConcept(ie1, be1), ie2)
         val dm3 = DerivedMeasure(be3, ie1)
         val dm4 = DerivedMeasure(RelationConcept(be3, be2), ie3)
         val dm5 = DerivedMeasure(be4, ie4)
         return listOf(
-            Measurement(dm1, Comparison.GREATER_THAN, dm2, TRUE),
-            Measurement(dm3, Comparison.EQUALS, cm1, listOf(cv1, cv2)),
-            Measurement(dm4, Comparison.LESS_THAN, cm2, UNKNOWN),
-            Measurement(dm5, Comparison.GREATER_THAN_EQUALS, cm3, listOf(cv3)),
-            Measurement(dm1, Comparison.LESS_THAN_EQUALS, cm2, FALSE)
+                Measurement(dm1, Comparison.GREATER_THAN, dm2, TRUE),
+                Measurement(dm3, Comparison.EQUALS, cm1, listOf(cv1, cv2)),
+                Measurement(dm4, Comparison.LESS_THAN, cm2, UNKNOWN),
+                Measurement(dm5, Comparison.GREATER_THAN_EQUALS, cm3, listOf(cv3)),
+                Measurement(dm1, Comparison.LESS_THAN_EQUALS, cm2, FALSE)
         )
     }
 

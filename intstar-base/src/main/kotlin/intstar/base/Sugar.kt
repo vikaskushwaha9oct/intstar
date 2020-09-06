@@ -10,101 +10,77 @@ fun b(vararg x: Int): ByteString {
     return ByteString(x.map { it.toByte() }.toByteArray())
 }
 
-data class MeasuresWithComparison(val left: DerivedMeasure, val comparison: Comparison, val right: Measure)
+data class MeasureComparison(val left: DerivedMeasure, val comparison: Comparison, val right: Measure)
 
-infix fun String.ms(id: String): DerivedMeasure {
-    return DerivedMeasure(IdEntityConcept(this), IdEntityConcept(id))
+infix fun String.ms(x: String): DerivedMeasure {
+    return DerivedMeasure(IdEntityConcept(this), IdEntityConcept(x))
 }
 
-infix fun ByteString.ms(id: String): DerivedMeasure {
-    return DerivedMeasure(ByteEntityConcept(this), IdEntityConcept(id))
+infix fun ByteString.ms(x: String): DerivedMeasure {
+    return DerivedMeasure(ByteEntityConcept(this), IdEntityConcept(x))
 }
 
-infix fun Concept.ms(id: String): DerivedMeasure {
-    return DerivedMeasure(this, IdEntityConcept(id))
+infix fun RelationConcept.ms(x: String): DerivedMeasure {
+    return DerivedMeasure(this, IdEntityConcept(x))
 }
 
-infix fun Concept.ms(x: IdEntityConcept): DerivedMeasure {
-    return DerivedMeasure(this, x)
+infix fun String.rel(x: String): RelationConcept {
+    return RelationConcept(IdEntityConcept(this), IdEntityConcept(x))
 }
 
-infix fun String.ms(x: IdEntityConcept): DerivedMeasure {
-    return DerivedMeasure(IdEntityConcept(this), x)
+infix fun ByteString.rel(x: String): RelationConcept {
+    return RelationConcept(ByteEntityConcept(this), IdEntityConcept(x))
 }
 
-infix fun ByteString.ms(x: IdEntityConcept): DerivedMeasure {
-    return DerivedMeasure(ByteEntityConcept(this), x)
+infix fun String.rel(x: ByteString): RelationConcept {
+    return RelationConcept(IdEntityConcept(this), ByteEntityConcept(x))
 }
 
-infix fun String.rel(id: String): RelationConcept {
-    return RelationConcept(IdEntityConcept(this), IdEntityConcept(id))
+infix fun ByteString.rel(x: ByteString): RelationConcept {
+    return RelationConcept(ByteEntityConcept(this), ByteEntityConcept(x))
 }
 
-infix fun ByteString.rel(id: String): RelationConcept {
-    return RelationConcept(ByteEntityConcept(this), IdEntityConcept(id))
+infix fun DerivedMeasure.eq(x: Double): MeasureComparison {
+    return MeasureComparison(this, Comparison.EQUALS, ConstantMeasure(x))
 }
 
-infix fun String.rel(bstr: ByteString): RelationConcept {
-    return RelationConcept(IdEntityConcept(this), ByteEntityConcept(bstr))
+infix fun DerivedMeasure.eq(x: Measure): MeasureComparison {
+    return MeasureComparison(this, Comparison.EQUALS, x)
 }
 
-infix fun ByteString.rel(bstr: ByteString): RelationConcept {
-    return RelationConcept(ByteEntityConcept(this), ByteEntityConcept(bstr))
+infix fun DerivedMeasure.lt(x: Double): MeasureComparison {
+    return MeasureComparison(this, Comparison.LESS_THAN, ConstantMeasure(x))
 }
 
-infix fun EntityConcept.rel(id: String): RelationConcept {
-    return RelationConcept(this, IdEntityConcept(id))
+infix fun DerivedMeasure.lt(x: Measure): MeasureComparison {
+    return MeasureComparison(this, Comparison.LESS_THAN, x)
 }
 
-infix fun EntityConcept.rel(bstr: ByteString): RelationConcept {
-    return RelationConcept(this, ByteEntityConcept(bstr))
+infix fun DerivedMeasure.gt(x: Double): MeasureComparison {
+    return MeasureComparison(this, Comparison.GREATER_THAN, ConstantMeasure(x))
 }
 
-infix fun EntityConcept.rel(x: EntityConcept): RelationConcept {
-    return RelationConcept(this, x)
+infix fun DerivedMeasure.gt(x: Measure): MeasureComparison {
+    return MeasureComparison(this, Comparison.GREATER_THAN, x)
 }
 
-infix fun DerivedMeasure.eq(value: Double): MeasuresWithComparison {
-    return MeasuresWithComparison(this, Comparison.EQUALS, ConstantMeasure(value))
+infix fun DerivedMeasure.lte(x: Double): MeasureComparison {
+    return MeasureComparison(this, Comparison.LESS_THAN_EQUALS, ConstantMeasure(x))
 }
 
-infix fun DerivedMeasure.eq(measure: Measure): MeasuresWithComparison {
-    return MeasuresWithComparison(this, Comparison.EQUALS, measure)
+infix fun DerivedMeasure.lte(x: Measure): MeasureComparison {
+    return MeasureComparison(this, Comparison.LESS_THAN_EQUALS, x)
 }
 
-infix fun DerivedMeasure.lt(value: Double): MeasuresWithComparison {
-    return MeasuresWithComparison(this, Comparison.LESS_THAN, ConstantMeasure(value))
+infix fun DerivedMeasure.gte(x: Double): MeasureComparison {
+    return MeasureComparison(this, Comparison.GREATER_THAN_EQUALS, ConstantMeasure(x))
 }
 
-infix fun DerivedMeasure.lt(measure: Measure): MeasuresWithComparison {
-    return MeasuresWithComparison(this, Comparison.LESS_THAN, measure)
+infix fun DerivedMeasure.gte(x: Measure): MeasureComparison {
+    return MeasureComparison(this, Comparison.GREATER_THAN_EQUALS, x)
 }
 
-infix fun DerivedMeasure.gt(value: Double): MeasuresWithComparison {
-    return MeasuresWithComparison(this, Comparison.GREATER_THAN, ConstantMeasure(value))
-}
-
-infix fun DerivedMeasure.gt(measure: Measure): MeasuresWithComparison {
-    return MeasuresWithComparison(this, Comparison.GREATER_THAN, measure)
-}
-
-infix fun DerivedMeasure.lte(value: Double): MeasuresWithComparison {
-    return MeasuresWithComparison(this, Comparison.LESS_THAN_EQUALS, ConstantMeasure(value))
-}
-
-infix fun DerivedMeasure.lte(measure: Measure): MeasuresWithComparison {
-    return MeasuresWithComparison(this, Comparison.LESS_THAN_EQUALS, measure)
-}
-
-infix fun DerivedMeasure.gte(value: Double): MeasuresWithComparison {
-    return MeasuresWithComparison(this, Comparison.GREATER_THAN_EQUALS, ConstantMeasure(value))
-}
-
-infix fun DerivedMeasure.gte(measure: Measure): MeasuresWithComparison {
-    return MeasuresWithComparison(this, Comparison.GREATER_THAN_EQUALS, measure)
-}
-
-infix fun MeasuresWithComparison.with(confidence: List<ConfidenceValue>): Measurement {
+infix fun MeasureComparison.with(confidence: List<ConfidenceValue>): Measurement {
     return Measurement(left, comparison, right, confidence)
 }
 

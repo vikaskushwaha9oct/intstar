@@ -1,10 +1,10 @@
 package intstar.mcalculus
 
 data class Measurement(
-    val left: DerivedMeasure,
-    val comparison: Comparison,
-    val right: Measure,
-    val confidence: List<ConfidenceValue>
+        val left: DerivedMeasure,
+        val comparison: Comparison,
+        val right: Measure,
+        val confidence: List<ConfidenceValue>
 ) {
     init {
         require(confidence.sumsToOne { it.value }) { "Total confidence should be 1" }

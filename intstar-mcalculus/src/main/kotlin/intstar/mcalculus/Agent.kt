@@ -1,9 +1,9 @@
 package intstar.mcalculus
 
 class Agent(
-    private val attention: SwitchSide,
-    private val action: SwitchSide,
-    bootstrap: Iterator<Measurement>
+        private val attention: SwitchSide,
+        private val action: SwitchSide,
+        bootstrap: Iterator<Measurement>
 ) : SwitchSide {
     init {
         createSwitch(this, attention)

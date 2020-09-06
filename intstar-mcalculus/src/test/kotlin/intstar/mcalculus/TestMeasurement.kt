@@ -25,7 +25,7 @@ class TestMeasurement {
 
     @Test
     fun testMeasurementChecks() {
-        val m1 = DerivedMeasure(AGENT, MANIFEST)
+        val m1 = DerivedMeasure(IdEntityConcept(AGENT), IdEntityConcept(MANIFEST))
         val m2 = ConstantMeasure(5.0)
         val cv1 = ConfidenceValue(listOf(OpenInterval(0.0, 3.5)), 0.5)
         val cv2 = ConfidenceValue(listOf(OpenInterval(3.0, 4.0)), 0.5)
@@ -38,7 +38,8 @@ class TestMeasurement {
 
     @Test
     fun testMeasurement() {
-        val m1 = DerivedMeasure(RelationConcept(AGENT, ByteEntityConcept(ByteString("hello".toByteArray()))), FOCUS)
+        val m1 = DerivedMeasure(RelationConcept(IdEntityConcept(AGENT),
+                ByteEntityConcept(ByteString("hello".toByteArray()))), IdEntityConcept(FOCUS))
         val m2 = ConstantMeasure(5.0)
         val set = Comparison.values().map { Measurement(m1, it, m2, TRUE) }.toMutableSet()
         set.addAll(listOf(TRUE, FALSE, UNKNOWN).map { Measurement(m1, Comparison.EQUALS, m2, it) })

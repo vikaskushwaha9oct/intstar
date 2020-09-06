@@ -17,7 +17,7 @@ class MLangParser(private val charset: Charset = Charsets.UTF_8) : LanguageParse
 }
 
 class ParseException(val error: String, val context: ParsedContext? = null) :
-    Exception(error + if (context != null) "\n" + context else "")
+        Exception(error + if (context != null) "\n" + context else "")
 
 data class ParsedContext(val text: String, val lineNo: Int, val colNo: Int) {
     override fun toString(): String {

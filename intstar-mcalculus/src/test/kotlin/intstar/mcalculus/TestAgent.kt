@@ -18,7 +18,8 @@ class TestAgent {
     }
 }
 
-private val MSG = Measurement(DerivedMeasure(AGENT, FOCUS), Comparison.GREATER_THAN, ConstantMeasure(0.0), TRUE)
+private val MSG = Measurement(DerivedMeasure(IdEntityConcept(AGENT), IdEntityConcept(FOCUS)), Comparison.GREATER_THAN,
+        ConstantMeasure(0.0), TRUE)
 
 private class TestAction : SwitchSide {
     var stop = false

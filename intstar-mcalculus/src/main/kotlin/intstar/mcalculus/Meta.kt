@@ -6,8 +6,8 @@ val FALSE = listOf(ConfidenceValue(listOf(OpenInterval(NEG_INFINITY, 0.0), OpenI
 
 val UNKNOWN = listOf(ConfidenceValue(listOf(OpenInterval(NEG_INFINITY, INFINITY)), 1.0))
 
-val AGENT = IdEntityConcept("$")
+const val AGENT = "$"
 
-val FOCUS = IdEntityConcept("*")
+const val FOCUS = "*"
 
-val MANIFEST = IdEntityConcept("@")
+const val MANIFEST = "@"

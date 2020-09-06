@@ -29,14 +29,14 @@ class UnionAction(private val manifestCreator: (EntityConcept) -> SwitchSide) : 
 
     override fun manifest(measurements: Iterator<Measurement>, otherSide: SwitchSide) {
         val mts = measurements.asSequence().toList()
-        for (mt in mts.filter { it.left.measurable == MANIFEST }) {
+        for (mt in mts.filter { it.left.measurable.id == MANIFEST }) {
             mt.left.concept.let {
                 val manifest = manifestCreator(it.right!!)
                 createSwitch(otherSide, manifest)
                 manifests[it.left!!] = manifest
             }
         }
-        for (mt in mts.filter { it.left.measurable == FOCUS }) {
+        for (mt in mts.filter { it.left.measurable.id == FOCUS }) {
             manifests[mt.left.concept]?.manifest(mts.iterator(), otherSide)
         }
     }

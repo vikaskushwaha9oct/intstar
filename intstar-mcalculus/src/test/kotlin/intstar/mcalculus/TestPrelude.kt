@@ -85,8 +85,8 @@ class TestPrelude {
     @Test
     fun testIntervalsIsSortedByStart() {
         val s1 = listOf(
-            OpenInterval(-1.0, 0.0), PointInterval(0.0),
-            OpenInterval(0.0, 1.0), OpenInterval(9.0, 9.5)
+                OpenInterval(-1.0, 0.0), PointInterval(0.0),
+                OpenInterval(0.0, 1.0), OpenInterval(9.0, 9.5)
         )
         val s2 = listOf(OpenInterval(0.0, 9.0))
         val s3 = listOf(OpenInterval(0.0, 5.0), OpenInterval(-3.0, INFINITY))
@@ -100,8 +100,8 @@ class TestPrelude {
     @Test
     fun testIntervalsIsDisjoint() {
         val s1 = listOf(
-            OpenInterval(-1.0, 0.0), PointInterval(0.0),
-            OpenInterval(0.0, 1.0), OpenInterval(9.0, 9.5)
+                OpenInterval(-1.0, 0.0), PointInterval(0.0),
+                OpenInterval(0.0, 1.0), OpenInterval(9.0, 9.5)
         )
         val s2 = listOf(OpenInterval(10.0, 11.0), PointInterval(11.0))
         val s3 = listOf(OpenInterval(0.0, 5.0), OpenInterval(-3.0, INFINITY))

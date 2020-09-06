@@ -8,9 +8,9 @@ fun Iterator<Measurement>.renderMLang(): String {
 }
 
 class MLangRenderer(
-    private val charset: Charset = Charsets.UTF_8,
-    private val newline: String = "\n",
-    private val doubleToLiteralFn: (Double) -> String = Double::toString
+        private val charset: Charset = Charsets.UTF_8,
+        private val newline: String = "\n",
+        private val doubleToLiteralFn: (Double) -> String = Double::toString
 ) : LanguageRenderer {
     override fun render(measurements: Iterator<Measurement>): InputStream {
         val mLiterals = measurements.asSequence().map { it.toLiteral(doubleToLiteralFn) }.iterator()
