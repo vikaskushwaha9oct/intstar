@@ -2,31 +2,36 @@ package intstar.base
 
 import intstar.mcalculus.*
 
-data class Var(val value: String)
+data class Var(val value: Int)
 
-fun v(x: String): Var {
+fun v(x: Int): Var {
     return Var(x)
 }
 
-data class MMatch(private val vars: Map<String, Any>) {
-    fun measure(x: String): Measure {
+data class MMatch(val vars: Map<Int, Any>) {
+    fun m(x: Int): Measure {
         return vars[x] as Measure
     }
 
-    fun concept(x: String): Concept {
+    fun c(x: Int): Concept {
         return vars[x] as Concept
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun cf(x: Int): List<ConfidenceValue> {
+        return vars[x] as List<ConfidenceValue>
     }
 }
 
 interface MPattern {
     fun match(x: Any): MMatch? {
-        val state = mutableMapOf<String, Any>()
+        val state = mutableMapOf<Int, Any>()
         return if (matchS(x, state)) MMatch(state) else null
     }
 
-    fun matchS(x: Any, state: MutableMap<String, Any>): Boolean
+    fun matchS(x: Any, state: MutableMap<Int, Any>): Boolean
 
-    fun setS(x: Any, symbol: Var, state: MutableMap<String, Any>): Boolean {
+    fun setS(x: Any, symbol: Var, state: MutableMap<Int, Any>): Boolean {
         val prev = state.put(symbol.value, x)
         return prev == null || prev == x
     }
@@ -36,18 +41,32 @@ data class MeasurementP(
         val left: DerivedMeasureP,
         val comparison: Comparison,
         val right: MeasureP,
-        val confidence: List<ConfidenceValue>
+        val confidence: ConfidenceP
 ) : MPattern {
-    override fun matchS(x: Any, state: MutableMap<String, Any>): Boolean {
+    override fun matchS(x: Any, state: MutableMap<Int, Any>): Boolean {
         return x is Measurement && left.matchS(x.left, state) && comparison == x.comparison &&
-                right.matchS(x.right, state) && confidence == x.confidence
+                right.matchS(x.right, state) && confidence.matchS(x.confidence, state)
+    }
+}
+
+sealed class ConfidenceP : MPattern
+
+data class ConfidenceFP(val value: List<ConfidenceValue>) : ConfidenceP() {
+    override fun matchS(x: Any, state: MutableMap<Int, Any>): Boolean {
+        return value == x
+    }
+}
+
+data class ConfidenceSP(val symbol: Var) : ConfidenceP() {
+    override fun matchS(x: Any, state: MutableMap<Int, Any>): Boolean {
+        return setS(x, symbol, state)
     }
 }
 
 sealed class MeasureP : MPattern
 
 data class ConstantMeasureP(val value: Double) : MeasureP() {
-    override fun matchS(x: Any, state: MutableMap<String, Any>): Boolean {
+    override fun matchS(x: Any, state: MutableMap<Int, Any>): Boolean {
         return x is ConstantMeasure && value == x.value
     }
 }
@@ -55,19 +74,19 @@ data class ConstantMeasureP(val value: Double) : MeasureP() {
 sealed class DerivedMeasureP : MeasureP()
 
 data class DerivedMeasureCP(val concept: ConceptP, val measurable: IdEntityConceptP) : DerivedMeasureP() {
-    override fun matchS(x: Any, state: MutableMap<String, Any>): Boolean {
+    override fun matchS(x: Any, state: MutableMap<Int, Any>): Boolean {
         return x is DerivedMeasure && concept.matchS(x.concept, state) && measurable.matchS(x.measurable, state)
     }
 }
 
 data class DerivedMeasureSP(val symbol: Var) : DerivedMeasureP() {
-    override fun matchS(x: Any, state: MutableMap<String, Any>): Boolean {
+    override fun matchS(x: Any, state: MutableMap<Int, Any>): Boolean {
         return x is DerivedMeasure && setS(x, symbol, state)
     }
 }
 
 data class MeasureSP(val symbol: Var) : MeasureP() {
-    override fun matchS(x: Any, state: MutableMap<String, Any>): Boolean {
+    override fun matchS(x: Any, state: MutableMap<Int, Any>): Boolean {
         return x is Measure && setS(x, symbol, state)
     }
 }
@@ -75,7 +94,7 @@ data class MeasureSP(val symbol: Var) : MeasureP() {
 sealed class ConceptP : MPattern
 
 data class RelationConceptP(val left: EntityConceptP, val right: EntityConceptP) : ConceptP() {
-    override fun matchS(x: Any, state: MutableMap<String, Any>): Boolean {
+    override fun matchS(x: Any, state: MutableMap<Int, Any>): Boolean {
         return x is RelationConcept && left.matchS(x.left, state) && right.matchS(x.right, state)
     }
 }
@@ -83,7 +102,7 @@ data class RelationConceptP(val left: EntityConceptP, val right: EntityConceptP)
 sealed class EntityConceptP : ConceptP()
 
 data class ConceptSP(val symbol: Var) : ConceptP() {
-    override fun matchS(x: Any, state: MutableMap<String, Any>): Boolean {
+    override fun matchS(x: Any, state: MutableMap<Int, Any>): Boolean {
         return x is Concept && setS(x, symbol, state)
     }
 }
@@ -91,25 +110,25 @@ data class ConceptSP(val symbol: Var) : ConceptP() {
 sealed class IdEntityConceptP : EntityConceptP()
 
 data class IdEntityConceptFP(val value: String) : IdEntityConceptP() {
-    override fun matchS(x: Any, state: MutableMap<String, Any>): Boolean {
+    override fun matchS(x: Any, state: MutableMap<Int, Any>): Boolean {
         return x is IdEntityConcept && value == x.value
     }
 }
 
 data class IdEntityConceptSP(val symbol: Var) : IdEntityConceptP() {
-    override fun matchS(x: Any, state: MutableMap<String, Any>): Boolean {
+    override fun matchS(x: Any, state: MutableMap<Int, Any>): Boolean {
         return x is IdEntityConcept && setS(x, symbol, state)
     }
 }
 
 data class ByteEntityConceptP(val value: ByteString) : EntityConceptP() {
-    override fun matchS(x: Any, state: MutableMap<String, Any>): Boolean {
+    override fun matchS(x: Any, state: MutableMap<Int, Any>): Boolean {
         return x is ByteEntityConcept && value == x.value
     }
 }
 
 data class EntityConceptSP(val symbol: Var) : EntityConceptP() {
-    override fun matchS(x: Any, state: MutableMap<String, Any>): Boolean {
+    override fun matchS(x: Any, state: MutableMap<Int, Any>): Boolean {
         return x is EntityConcept && setS(x, symbol, state)
     }
 }
@@ -146,7 +165,7 @@ fun Measure.asPattern(): MeasureP {
 }
 
 fun Measurement.asPattern(): MeasurementP {
-    return MeasurementP(left.asPattern(), comparison, right.asPattern(), confidence)
+    return MeasurementP(left.asPattern(), comparison, right.asPattern(), ConfidenceFP(confidence))
 }
 
 infix fun String.ms(x: Var): DerivedMeasureP {
@@ -398,5 +417,9 @@ infix fun Var.gte(x: Var): MeasureComparisonP {
 }
 
 infix fun MeasureComparisonP.with(confidence: List<ConfidenceValue>): MeasurementP {
-    return MeasurementP(left, comparison, right, confidence)
+    return MeasurementP(left, comparison, right, ConfidenceFP(confidence))
+}
+
+infix fun MeasureComparisonP.with(confidence: Var): MeasurementP {
+    return MeasurementP(left, comparison, right, ConfidenceSP(confidence))
 }
