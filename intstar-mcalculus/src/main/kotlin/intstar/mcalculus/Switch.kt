@@ -6,6 +6,8 @@ interface SwitchSide {
     fun wait(otherSide: SwitchSide)
 
     fun connect(otherSide: SwitchSide)
+
+    fun disconnect(otherSide: SwitchSide)
 }
 
 fun createSwitch(left: SwitchSide, right: SwitchSide) {

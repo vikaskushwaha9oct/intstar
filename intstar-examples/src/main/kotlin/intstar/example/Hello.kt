@@ -4,24 +4,27 @@ import intstar.base.*
 import intstar.mcalculus.*
 
 private fun main() {
-    val bootstrap = listOf(HELLO_ACTION_MANIFEST, HELLO_ACTION_FOCUSED).iterator()
+    val bootstrap = iteratorOf(HELLO_MANIFEST, HELLO_FOCUSED)
     val agent = Agent(UnionAttention(), UnionAction(::manifestCreator), bootstrap)
-    agent.start()
+    agent.run()
 }
 
-private val HELLO_ACTION_FOCUSED = ("hello" ms FOCUS) gt 0.0 with TRUE
-private val HELLO_ACTION_MANIFEST = ("hello" rel b("HelloAction") ms MANIFEST) gt 0.0 with TRUE
+private const val HELLO = "hello"
+private val HELLO_FOCUSED = (HELLO ms FOCUS) gt 0.0 with TRUE
+private val HELLO_MANIFEST = (HELLO rel b(HELLO) ms MANIFEST) gt 0.0 with TRUE
 
 private fun manifestCreator(concept: EntityConcept): SwitchSide {
-    return if (concept.bstr?.asString() == "HelloAction") HelloAction() else throw UnsupportedOperationException()
+    return when (concept.bstr?.asString()) {
+        HELLO -> HelloAction()
+        else -> throw UnsupportedOperationException()
+    }
 }
 
 private class HelloAction : BaseSwitchSide() {
     override fun manifest(measurements: Iterator<Measurement>, otherSide: SwitchSide) {
-        val mts = measurements.asSequence().toList()
-        if (mts.contains(HELLO_ACTION_MANIFEST)) {
+        if (measurements.asSequence().contains(HELLO_MANIFEST)) {
             println("Hello World")
-            otherSide.manifest(listOf(HELLO_ACTION_FOCUSED).iterator(), this)
+            otherSide.manifest(iteratorOf(HELLO_FOCUSED), this)
         } else {
             (otherSide as Agent).stop()
         }

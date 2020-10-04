@@ -11,9 +11,9 @@ class TestAgent {
     @Test
     fun test() {
         assertTimeoutPreemptively(ofSeconds(2)) {
-            val agent = Agent(TestAttention(), TestAction(), listOf(MSG).iterator())
+            val agent = Agent(TestAttention(), TestAction(), iteratorOf(MSG))
             assertThrows<UnsupportedOperationException> { agent.wait(agent) }
-            agent.start()
+            agent.run()
         }
     }
 }
@@ -32,7 +32,7 @@ private class TestAction : SwitchSide {
             stop = true
         }
         assertEquals(listOf(MSG), measurements.asSequence().toList())
-        otherSide.manifest(listOf(MSG).iterator(), this)
+        otherSide.manifest(iteratorOf(MSG), this)
     }
 
     override fun wait(otherSide: SwitchSide) {
@@ -40,6 +40,10 @@ private class TestAction : SwitchSide {
     }
 
     override fun connect(otherSide: SwitchSide) {
+        assertTrue(otherSide is Agent)
+    }
+
+    override fun disconnect(otherSide: SwitchSide) {
         assertTrue(otherSide is Agent)
     }
 }
@@ -52,10 +56,14 @@ private class TestAttention : SwitchSide {
 
     override fun wait(otherSide: SwitchSide) {
         assertTrue(otherSide is Agent)
-        otherSide.manifest(listOf(MSG).iterator(), this)
+        otherSide.manifest(iteratorOf(MSG), this)
     }
 
     override fun connect(otherSide: SwitchSide) {
+        assertTrue(otherSide is Agent)
+    }
+
+    override fun disconnect(otherSide: SwitchSide) {
         assertTrue(otherSide is Agent)
     }
 }

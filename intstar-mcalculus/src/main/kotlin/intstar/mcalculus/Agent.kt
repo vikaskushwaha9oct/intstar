@@ -5,20 +5,22 @@ class Agent(
         private val action: SwitchSide,
         bootstrap: Iterator<Measurement>
 ) : SwitchSide {
+    private var alive = true
+    private var context = bootstrap
+    private var otherSides = mutableListOf<SwitchSide>()
+
     init {
         createSwitch(this, attention)
         createSwitch(this, action)
-        attention.manifest(bootstrap, this)
+        attention.manifest(context, this)
     }
 
-    private var alive = true
-    private var context = bootstrap
-
-    fun start() {
+    fun run() {
         while (alive) {
             attention.wait(this)
             action.manifest(context, this)
         }
+        otherSides.forEach { it.disconnect(this) }
     }
 
     fun stop() {
@@ -38,5 +40,9 @@ class Agent(
     }
 
     override fun connect(otherSide: SwitchSide) {
+        otherSides.add(otherSide)
+    }
+
+    override fun disconnect(otherSide: SwitchSide) {
     }
 }

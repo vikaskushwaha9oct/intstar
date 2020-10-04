@@ -18,6 +18,10 @@ fun Double.isDefined(): Boolean {
     return !isNaN() && (-0.0).compareTo(this) != 0
 }
 
+fun <T> iteratorOf(vararg elements: T): Iterator<T> {
+    return elements.iterator()
+}
+
 sealed class Interval {
     abstract fun compareStart(other: Interval): Int
 

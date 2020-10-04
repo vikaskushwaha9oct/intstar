@@ -1,26 +1,48 @@
 package intstar.base
 
 import intstar.mcalculus.*
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 abstract class BaseSwitchSide : SwitchSide {
+    override fun manifest(measurements: Iterator<Measurement>, otherSide: SwitchSide) {
+    }
+
     override fun wait(otherSide: SwitchSide) {
         throw UnsupportedOperationException()
     }
 
     override fun connect(otherSide: SwitchSide) {
     }
+
+    override fun disconnect(otherSide: SwitchSide) {
+    }
 }
 
 class UnionAttention : BaseSwitchSide() {
-    private var context = mutableListOf<Measurement>()
+    private val contextLock = ReentrantLock()
+    private val contextAvailable = contextLock.newCondition()
+    private val context = mutableListOf<Measurement>()
 
     override fun manifest(measurements: Iterator<Measurement>, otherSide: SwitchSide) {
-        context.addAll(measurements.asSequence())
+        contextLock.withLock {
+            context.addAll(measurements.asSequence())
+            if (context.isNotEmpty()) {
+                contextAvailable.signal()
+            }
+        }
     }
 
     override fun wait(otherSide: SwitchSide) {
-        otherSide.manifest(context.toList().iterator(), this)
-        context.clear()
+        var contextList: List<Measurement>
+        contextLock.withLock {
+            if (context.isEmpty()) {
+                contextAvailable.await()
+            }
+            contextList = context.toList()
+            context.clear()
+        }
+        otherSide.manifest(contextList.iterator(), this)
     }
 }
 
