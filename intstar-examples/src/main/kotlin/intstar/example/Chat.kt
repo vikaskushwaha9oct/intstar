@@ -20,20 +20,20 @@ private const val TERMINAL = "terminal"
 private const val NETWORK = "network"
 private const val OTHER_AGENT = "other"
 private val MSG_ATTRIBUTION_PAT = (v(0) rel v(1) ms ATTRIBUTION) gt 0.0 with TRUE
-private val TERMINAL_MANIFEST = (TERMINAL rel b(TERMINAL) ms MANIFEST) gt 0.0 with TRUE
-private val NETWORK_MANIFEST = (NETWORK rel b(NETWORK) ms MANIFEST) gt 0.0 with TRUE
+private val TERMINAL_MANIFEST = (TERMINAL rel b(1) ms MANIFEST) gt 0.0 with TRUE
+private val NETWORK_MANIFEST = (NETWORK rel b(2) ms MANIFEST) gt 0.0 with TRUE
 private val TERMINAL_FOCUS = (TERMINAL ms FOCUS) gt 0.0 with TRUE
 private val NETWORK_FOCUS = (NETWORK ms FOCUS) gt 0.0 with TRUE
 
 private fun manifestCreator(concept: EntityConcept): SwitchSide {
-    return when (concept.bstr?.asString()) {
-        TERMINAL -> Terminal()
-        NETWORK -> Network()
+    return when (concept.bstr?.byteAt(0)?.toInt()) {
+        1 -> ChatTerminal()
+        2 -> ChatNetwork()
         else -> throw UnsupportedOperationException()
     }
 }
 
-private class Terminal : BaseSwitchSide() {
+private class ChatTerminal : BaseSwitchSide() {
     override fun manifest(measurements: Iterator<Measurement>, otherSide: SwitchSide) {
         measurements.asSequence().map(MSG_ATTRIBUTION_PAT::match).filterNotNull().forEach {
             val speaker = it.c(0).id!!
@@ -53,7 +53,7 @@ private class Terminal : BaseSwitchSide() {
     }
 }
 
-private class Network : BaseSwitchSide() {
+private class ChatNetwork : BaseSwitchSide() {
     private lateinit var socket: Socket
     private lateinit var socketReader: Scanner
     private lateinit var socketWriter: PrintWriter

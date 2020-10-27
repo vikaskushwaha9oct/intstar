@@ -16,14 +16,14 @@ where one end of the switch declares concepts & their relationships, and the end
 those concepts & associated actions. Any communication between two switch ends is done in terms of a sequence of
 measurements.
 
-2) _Measurement_: A common representation system for knowledge/actions. It consist of two measurable values being compared
-with each other. Further, uncertainty and confidence, can be associated with each measurement. The representation aims
-to be minimal, with the ability to encode different types of noisy knowledge representations easily. Such a
-representation should allow us to easily define and experiment with metrics based on structure of knowledge.
+2) _Measurement_: A common representation system for knowledge/actions. It consist of two measurable values being
+compared with each other. Further, uncertainty and confidence, can be associated with each measurement. The
+representation aims to be minimal, with the ability to encode different types of noisy knowledge representations easily.
+Such a representation should allow us to easily define and experiment with metrics based on structure of knowledge.
 
-3) _Agent_: Provides a template for computation. It is defined in terms of attention and action cycles. Agent, Attention,
-Action -- all 3 are defined as switch sides. To define an intelligent agent, we instantiate an Agent, with appropriate
-implementations of Attention and Action, and a set of measurements to bootstrap with.
+3) _Agent_: Provides a template for computation. It is defined in terms of attention and action cycles. Agent,
+Attention, Action -- all 3 are defined as switch sides. To define an intelligent agent, we instantiate an Agent, with
+appropriate implementations of Attention and Action, and a set of measurements to bootstrap with.
 
 4) _Language_: Provides abstractions to define serializable languages on top of Measurement representation. The default
 human readable language to serialize Measurement objects is called M Lang.
@@ -32,11 +32,11 @@ human readable language to serialize Measurement objects is called M Lang.
 
 1) _mcalculus_ module defines different parts of the M calculus computation model.
 
-2) _mlang_ module defines parsers and renderer for a human readable language representation of measurements. This includes
-a syntax to specify measurement sets compactly by writing common parts only once.
+2) _mlang_ module defines parsers and renderer for a human readable language representation of measurements. This
+includes a syntax to specify measurement sets compactly by writing common parts only once.
 
 3) _base_ module defines: a dsl to easily define measurements directly in kotlin, a dsl/system to pattern match over
-measurements, and some basic implementation of Attention and Action.
+measurements, and some basic implementations of Attention and Action.
 
 4) _examples_ module defines small systems illustrating usage of M calculus model and the associated machinery.
 

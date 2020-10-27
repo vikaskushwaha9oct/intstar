@@ -11,11 +11,11 @@ private fun main() {
 
 private const val HELLO = "hello"
 private val HELLO_FOCUSED = (HELLO ms FOCUS) gt 0.0 with TRUE
-private val HELLO_MANIFEST = (HELLO rel b(HELLO) ms MANIFEST) gt 0.0 with TRUE
+private val HELLO_MANIFEST = (HELLO rel b(1) ms MANIFEST) gt 0.0 with TRUE
 
 private fun manifestCreator(concept: EntityConcept): SwitchSide {
-    return when (concept.bstr?.asString()) {
-        HELLO -> HelloAction()
+    return when (concept.bstr?.byteAt(0)?.toInt()) {
+        1 -> HelloAction()
         else -> throw UnsupportedOperationException()
     }
 }
