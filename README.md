@@ -40,8 +40,27 @@ measurements, and some basic implementations of Attention and Action.
 
 4) _examples_ module defines small systems illustrating usage of M calculus model and the associated machinery.
 
-**Coming soon:**
+5) _ai_ module defines a comprehensive AI system, which can be be used to write intelligent conversational agents and
+decision makers. (WIP)
 
-1) More examples illustrating logic systems and vector representation based statistical systems.
+**AI module packages:**
 
-2) A more comprehensive AI system, which can be be used to write intelligent conversational agents and decision makers.
+1) _io_ defines switches for AI to interact with its environment.
+
+2) _quantifier_ defines switches to quantify structural properties of measurement sets. They help us define optimization
+problems that the solvers should try to solve.
+
+3) _solver_ defines switches to solve various optimization problems.
+
+4) _agent_ defines switches which provide various Attention and Action mechanisms.
+
+5) _prelude_ defines functionality to be used by above 4 packages.
+
+**Usage:**
+
+1) Define an Agent, by choosing an implementation of Attention & Action. Look at _example_ module.
+
+2) Bootstrap with measurements to manifest various types of switches (io/quantifier/solver) based on functionality
+required.
+
+3) Extend further with custom switch implementations beside the ones available from _ai_ module.
