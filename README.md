@@ -48,7 +48,7 @@ decision makers. (WIP)
 1) _io_ defines switches for AI to interact with its environment.
 
 2) _quantifier_ defines switches to quantify structural properties of measurement sets. They help us define optimization
-problems that the solvers should try to solve.
+problems that the solvers should try to solve. Read more [here](intstar-ai/src/main/kotlin/intstar/ai/quantifier/README.md).
 
 3) _solver_ defines switches to solve various optimization problems.
 
