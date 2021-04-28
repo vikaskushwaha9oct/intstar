@@ -28,6 +28,8 @@ appropriate implementations of Attention and Action, and a set of measurements t
 4) _Language_: Provides abstractions to define serializable languages on top of Measurement representation. The default
 human readable language to serialize Measurement objects is called M Lang.
 
+5) _MeasurementNetwork_: An abstraction to allow us to store, search and organize measurements.
+
 **Project architecture:**
 
 1) _mcalculus_ module defines different parts of the M calculus computation model.
