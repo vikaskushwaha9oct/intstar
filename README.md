@@ -6,8 +6,9 @@ measurement calculus).
 It approaches AI from a distributed systems perspective and relies on structural metrics to guide intelligent behaviour.
 Aim is to explore: 1) how complexity can arise from simple solvers working together in a distributed setting, 2) how
 metrics on the structure of knowledge can be used to create solvers which generalize across domains, with little
-training, and 3) how the combination of above two, could result into a flexible real time learning system, based on
-conversation.
+training, 3) how the combination of above two, could result into a flexible real time learning system, capable of
+taking decisions and carrying out conversations, and 4) how we can load knowledge into the system using knowledge
+creation tools.
 
 **M calculus concepts:**
 
@@ -34,20 +35,23 @@ human readable language to serialize Measurement objects is called M Lang.
 
 1) _mcalculus_ module defines different parts of the M calculus computation model.
 
-2) _mlang_ module defines parsers and renderer for a human readable language representation of measurements. This
-includes a syntax to specify measurement sets compactly by writing common parts only once.
+2) _mcalculus-lang_ module defines parsers and renderer for a human readable language representation of measurements.
+This includes a syntax to specify measurement sets compactly by writing common parts only once.
 
-3) _base_ module defines: a dsl to easily define measurements directly in kotlin, a dsl/system to pattern match over
-measurements, and some basic implementations of Attention and Action.
+3) _mcalculus-helper_ module defines: a dsl to easily define measurements directly in kotlin, a dsl/system to pattern
+match over measurements, and some basic implementations of Attention and Action.
 
-4) _examples_ module defines small systems illustrating usage of M calculus model and the associated machinery.
+4) _mcalculus-examples_ module defines small systems illustrating usage of M calculus model and the associated machinery.
 
 5) _ai_ module defines a comprehensive AI system, which can be be used to write intelligent conversational agents and
-decision makers. (WIP)
+decision makers.
+
+6) _knowledge-creator_ module defines a system for creating knowledge which includes decision making recipes and concept
+dictionaries.
 
 **AI module packages:**
 
-1) _io_ defines switches for AI to interact with its environment.
+1) _io_ defines switches for AI to interact with its environment and other useful knowledge systems.
 
 2) _quantifier_ defines switches to quantify structural properties of measurement sets. They help us define optimization
 problems that the solvers should try to solve. Read more [here](intstar-ai/src/main/kotlin/intstar/ai/quantifier/README.md).
@@ -66,3 +70,6 @@ problems that the solvers should try to solve. Read more [here](intstar-ai/src/m
 required.
 
 3) Extend further with custom switch implementations beside the ones available from _ai_ module.
+
+4) Create new decision making recipes or concept dictionaries using tools provided by _knowledge-creator_, and make them
+available to the Agent via a switch.
