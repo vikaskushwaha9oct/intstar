@@ -1,4 +1,4 @@
-package intstar.base
+package intstar.helper
 
 import intstar.mcalculus.*
 import java.util.concurrent.locks.ReentrantLock

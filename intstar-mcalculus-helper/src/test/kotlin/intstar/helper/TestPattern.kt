@@ -1,4 +1,4 @@
-package intstar.base
+package intstar.helper
 
 import intstar.mcalculus.TRUE
 import org.junit.jupiter.api.Assertions.assertEquals

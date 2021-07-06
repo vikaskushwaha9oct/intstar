@@ -1,6 +1,6 @@
 package intstar.example
 
-import intstar.base.*
+import intstar.helper.*
 import intstar.mcalculus.*
 import java.io.IOException
 import java.io.PrintWriter

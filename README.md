@@ -47,7 +47,7 @@ match over measurements, and some basic implementations of Attention and Action.
 decision makers.
 
 6) _knowledge-creator_ module defines a system for creating knowledge which includes decision making recipes and concept
-dictionaries.
+dictionaries. Read more [here](intstar-knowledge-creator/src/main/kotlin/intstar/kc/README.md).
 
 **AI module packages:**
 
