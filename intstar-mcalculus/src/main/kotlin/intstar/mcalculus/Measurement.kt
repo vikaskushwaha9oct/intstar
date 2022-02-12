@@ -49,3 +49,5 @@ sealed class EntityConcept : Concept()
 data class IdEntityConcept(val value: String) : EntityConcept()
 
 data class ByteEntityConcept(val value: ByteString) : EntityConcept()
+
+data class MeasurementEntityConcept(val value: List<Measurement>) : EntityConcept()

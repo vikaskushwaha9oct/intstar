@@ -143,6 +143,7 @@ fun EntityConcept.asPattern(): EntityConceptP {
     return when (this) {
         is IdEntityConcept -> IdEntityConceptFP(value)
         is ByteEntityConcept -> ByteEntityConceptP(value)
+        is MeasurementEntityConcept -> throw UnsupportedOperationException()
     }
 }
 

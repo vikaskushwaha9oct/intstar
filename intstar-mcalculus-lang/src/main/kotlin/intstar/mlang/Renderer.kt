@@ -75,6 +75,7 @@ private fun EntityConcept.toLiteral(): String {
     return when (this) {
         is IdEntityConcept -> value.toLiteral()
         is ByteEntityConcept -> value.toLiteral()
+        is MeasurementEntityConcept -> throw UnsupportedOperationException()
     }
 }
 
