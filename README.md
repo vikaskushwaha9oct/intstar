@@ -4,11 +4,13 @@ This project defines a computational framework for modelling complex adaptive hi
 calculus). Some examples of such systems which exhibit (int)egrative (int)elligence include our brains, organizations,
 social and economic systems.
 
-Aim is to explore: 1) how complexity can arise from simple solvers working together under the guidance of a hierarchy,
+Aim is to explore:
 
+1) how complexity can arise from simple solvers working together under the guidance of a hierarchy,
 2) how metrics on the structure of knowledge can be used to create solvers which generalize across domains, with little
-   training, 3) how the combination of above two, could result into a flexible real time learning system, capable of
-   taking decisions and adapting to environment in an unsupervised manner.
+   training,
+3) how the combination of above two, could result into a flexible real time learning system, capable of taking decisions
+   and adapting to environment in an unsupervised manner.
 
 **M calculus concepts:**
 
