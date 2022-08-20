@@ -29,12 +29,19 @@ number of memory queries, required in its processing.
 
 * **Procedurality** :
 It is a measure of ease of converting a set of measurements to a list of actions. The more sequenced a set of
-measurements, the better.
+  measurements, the better.
 
 * **Doubtness** :
-How much is unknown, with no associated plan of revealing it?
+  How much is unknown, with no associated plan of revealing it?
 
 These quantifier would conflict with each other. The role of the attention is to schedule execution of solvers, based on
 which quantifier presents most pressing needs, and a bias built into the system as a proxy for "pre-disposition to
 certain behaviours". Roughly speaking, quality of these quantifiers and solvers determines intelligence. Associativity
 values determines the values system.
+
+**Stability of the system** :
+Long term stability of a system (anti-fragility) needs 3 classes of quantifiers.
+
+1) Defence: Detection of internal/external threats, which can throw the system off
+2) Sustenance: These quantifiers setup the baseline that the system should meet most of the time
+3) Exploration: Allow system to experiment with new states in a stable manner
