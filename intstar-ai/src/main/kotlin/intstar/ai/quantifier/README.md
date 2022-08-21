@@ -44,4 +44,5 @@ Long term stability of a system (anti-fragility) needs 3 classes of quantifiers.
 
 1) Defence: Detection of internal/external threats, which can throw the system off
 2) Sustenance: These quantifiers setup the baseline that the system should meet most of the time
-3) Exploration: Allow system to experiment with new states in a stable manner
+3) Exploration: Allow system to experiment with new states in a stable manner. Connectivity determines the frequency at
+   which we see new changes.
