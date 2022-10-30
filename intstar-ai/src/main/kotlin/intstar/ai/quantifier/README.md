@@ -26,7 +26,7 @@ _Storytelling intelligence_: The ability to tell a story requires logic, symboli
 * **Doubtness** :
   How much is unknown, with no associated plan of revealing it?
 
-_Control intelligence_: The ability to control/limit thinking/actions
+_Control intelligence_: The ability to control/limit thinking/impluses
 
 * **Stateness** :
   A measure of information density, which can be calculated by the number of measurements which need focus in each epoch
@@ -45,13 +45,9 @@ on which quantifier are most attention grabbing, and a bias built into the syste
 certain behaviours".
 
 **Stability of the system** :
-Long term stability of a system (anti-fragility) needs 3 classes of quantifiers.
+Long term stability of a system (anti-fragility) needs a balance of 3 categories of behaviours.
 
-1) Sustenance: These quantifiers setup the ritualistic behaviours that system should perform regularly
+1) Sustenance: Baseline/ritualistic behaviours that system should perform regularly
 2) Exploration: Allow system to experiment with new states in a stable manner. Connectivity determines the frequency at
    which we see new changes.
 3) Defence: Control over internal/external stimuli, which can throw the system off
-
-These classes (Sustenance, Exploration and Defence) may map closely with (Autocomplete, Storytelling and Control
-intelligence)
-respectively.
