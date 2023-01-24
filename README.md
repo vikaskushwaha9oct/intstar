@@ -12,6 +12,9 @@ Aim is to explore:
 3) how the combination of above two, could result into a flexible real time learning system, capable of taking decisions
    and adapting to environment in an unsupervised manner.
 
+Read more on the related ideas
+here: [Culture: Where Physical Meets Psychological](https://culturewherephysicalmeetspsychological.quora.com/)
+
 **M calculus concepts:**
 
 1) _Measurement_: We need a common way of describing information, which can work across different abstraction levels and
