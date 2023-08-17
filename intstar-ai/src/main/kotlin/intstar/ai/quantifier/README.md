@@ -1,41 +1,45 @@
-Are there a meta set of quantifiers of knowledge (measurement sets), which when used together, allow agents to
-autonomously explore and create knowledge, and possibly exhibit "personality" and "value system"?
+**What makes an impactful story?**
 
-Below is a rough attempt at creating such a set of quantifiers.
+By story here, I mean an organized collection of information, which would include things like articles, software
+programs, novels, movies, ideas and many other human intellectual creations. Impactful-ness of a story can be explored
+via these 3 questions:
 
-* **Associativity** :
-  Measure of how closely connected is a given set of measurement to another fixed sensory measurement. It tries to
-  emulate things like how thinking about a food item may make us feel hungry, for example. We may be able to calculate
-  it as distance between measurements in a measurement graph.
+1. **Can it be processed by the listener?**
 
-* **Randomness** :
-  It is a measure of lack of patterns. One approach to calculate it is to cluster measurements based on patterns, and
-  look for number of measurements which span across clusters.
+a. _Abstract-ness_: Concrete concepts have higher number of clear relationships with other concepts, as compared to
+abstract concepts. This makes it easier to visualize them. Imagination plays a role in processing more abstract
+concepts.
 
-* **Consistency** :
-  How non contradictory are measurements in a given set? To calculate it, we can count the number of contradictory
-  measurement pairs found in an approximate scan of the set.
+b. _Working Memory Cost_: If processing a predicate, requires you to keep a large amount of concepts in your brain's
+working memory, then it is harder to understand.
 
-* **Genericity** :
-  How many measurements use a given measurement as their template?
+c. _Long-term Memory Cost_: More uncommon the concepts involved for the listener, more is the cost to retrieve those
+concepts from long term memory.
 
-* **Doubtness** :
-  How much is unknown, with no associated plan of revealing it?
+d. _Pattern Complexity_: Complexity of the patterns that must be decoded by the listener to understand the story. How
+the listener's brain represents concepts determines the ease-ness of spotting patterns.
 
-* **Stateness** :
-  A measure of information density, which can be calculated by the number of measurements which need focus in each epoch
-  of attention.
+2. **Is it sound, clear and makes sense to the listener?**
 
-* **Contextness** :
-  How much global information one needs to recall, when processing a set of measurements. We can calculate it as the
-  number of memory queries, required in its processing.
+a. _Consistency_: Are there contradictions in the story? Is the story in line with the stated goals of the story.
 
-* **Procedurality** :
-  It is a measure of ease of converting a set of measurements to a list of actions. The more sequenced a set of
-  measurements, the better.
+b. _Conceptual Clarity_: How well different parts of the story fit in with existing knowledge? Are there clear
+boundaries between various concepts?
 
-These quantifiers would conflict with each other. The role of the attention is to schedule execution of solvers, based
-on which quantifier are most attention grabbing, and a bias built into the system as a proxy for "pre-disposition to
+3. **How it makes the listener feel (it determines motivation, which in turn decides the attention)?**
+
+a. _Overwhelmed_: Feeling of being mentally tired.
+
+b. _Unknown_: Familiar can be safe, secure or boring. Unfamiliar can be adventurous or scary, depending on context.
+
+c. _Gain/Loss_: Does the story induce positive or negative memories/predictions.
+
+d. _Balance_: We find balanced things to be more beautiful.
+
+e. _Connection_: Feeling of being part of something larger than self, like spirituality, love, etc.
+
+Above properties would conflict with each other. The role of the attention is to schedule execution of solvers, based on
+which properties are most attention grabbing, and a bias built into the system as a proxy for "pre-disposition to
 certain behaviours".
 
 **Intelligence exhibited by the system** :
